@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
 import loginBackground from '../assets/login-background.webp';
-import loginIcon from '../assets/login-icon.png';
+import logo from '../assets/logo.png';
 
 export default function LoginPage() {
 return (
@@ -15,7 +15,7 @@ return (
         <div className="absolute inset-0 bg-black bg-opacity-50">
         <div className="absolute top-6 left-6 flex items-center space-x-4">
             <img
-            src={loginIcon}
+            src={logo}
             alt="PhoenEY Logo"
             className="w-10 h-10" // 使用 Tailwind 類來設置寬度和高度
             />
@@ -34,7 +34,7 @@ return (
         <div className="w-full max-w-md p-8 space-y-8 flex-col items-center">
         <div className="w-full flex justify-center">
             <img
-                src={loginIcon}
+                src={logo}
                 alt="PhoenEY Logo"
                 className="w-14 h-14"
             />
