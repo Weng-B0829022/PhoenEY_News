@@ -75,31 +75,32 @@ const Home = () => {
             {/* Search bar */}
             <div className="relative w-full max-w-[726px] h-[60px] mx-auto">
             {/* SVG for Step 1 */}
-            <svg width="363" height="60" viewBox="0 0 363 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute top-0 left-0">
-                <path d="M0.5 0H340.5L363.5 30L340.5 60H0.5V0Z" fill={currentStep === 1 ? "#FBFF2B" : "#E5E7EB"} />
+            
+            <svg width="50%" height="60" viewBox="0 0 363 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute top-0 left-0">
+                <path d="M0.5 0H340.5L363.5 30L340.5 60H0.5V0Z" fill={currentStep === 1 ? "#FBFF2B" : "#E5E7EB" } stroke="#D1D5DB" />
             </svg>
             
             {/* SVG for Step 2 */}
-            <svg width="363" height="60" viewBox="0 0 363 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute top-0 left-[363px] ">
-                <path d="M0.5 0H340.5L363.5 30L340.5 60H0.5V0Z" fill={currentStep === 2 ? "#FBFF2B" : "#000000"}/>
+            <svg width="50%" height="60" viewBox="0 0 363 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute top-0 left-[363px] ">
+                <path d="M0.5 0H340.5L363.5 30L340.5 60H0.5V0Z" fill={currentStep === 2 ? "#FBFF2B" : "#000000"} stroke="#D1D5DB" />
             </svg>
             
             {/* Content overlay */}
-            <div className="absolute inset-0 flex">
-                {/* Step 1 content */}
-                <div className="flex items-center flex-1 pl-6">
-                <span className="font-bold text-gray-700 mr-4 text-lg">STEP 1</span>
-                <Search className="text-gray-700 mr-2" size={20} />
-                <span className="text-gray-700 text-lg">搜尋</span>
-                </div>
+                <div className="absolute inset-0 flex">
+                    {/* Step 1 content */}
+                    <div className="flex items-center justify-center w-1/2 space-x-2">
+                        <span className="font-bold text-gray-700 whitespace-nowrap text-sm sm:text-base md:text-lg">STEP 1</span>
+                        <Search className="text-gray-700 hidden sm:inline" size={20} />
+                        <span className="text-gray-700 whitespace-nowrap text-sm sm:text-base md:text-lg">搜尋</span>
+                    </div>
 
-                {/* Step 2 content */}
-                <div className="flex items-center flex-1 pl-12">
-                <span className="font-bold text-gray-700 mr-4 text-lg">STEP 2</span>
-                <BarChart2 className="text-gray-700 mr-2" size={20} />
-                <span className="text-gray-700 text-lg">結果</span>
+                    {/* Step 2 content */}
+                    <div className="flex items-center justify-center w-1/2 space-x-2">
+                        <span className="font-bold text-gray-700 whitespace-nowrap text-sm sm:text-base md:text-lg">STEP 2</span>
+                        <BarChart2 className="text-gray-700 hidden sm:inline" size={20} />
+                        <span className="text-gray-700 whitespace-nowrap text-sm sm:text-base md:text-lg">結果</span>
+                    </div>
                 </div>
-            </div>
             </div>
 
         

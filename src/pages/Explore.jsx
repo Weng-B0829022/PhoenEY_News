@@ -54,11 +54,12 @@ const NavigationBar = () => {
       </button>
       {items.map((item) => (
         <NavItem
-          key={item.id}
-          label={item.label}
-          active={item.active}
-          onClose={() => closeItem(item.id)}
-          onClick={() => toggleActive(item.id)}
+            className="w-8"
+            key={item.id}
+            label={item.label}
+            active={item.active}
+            onClose={() => closeItem(item.id)}
+            onClick={() => toggleActive(item.id)}
         />
       ))}
     </div>
