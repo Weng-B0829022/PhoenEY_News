@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Route, Routes, Link, useParams } from 'react-router-dom';
 import { Bell, Mail, ChevronDown, Search, Sliders, X } from 'lucide-react';
+import NewsDetail from './Explore/NewsDetail';
+// 假設這些圖標組件存在於您的項目中
 import StarIcon from '../icons/StarIcon';
 import SearchIcon from '../icons/SearchIcon';
+
 const NavItem = ({ label, active, onClose, onClick }) => (
   <button 
     className={`flex items-center px-3 py-1 rounded-md ${
@@ -54,53 +58,62 @@ const NavigationBar = () => {
       </button>
       {items.map((item) => (
         <NavItem
-            className="w-8"
-            key={item.id}
-            label={item.label}
-            active={item.active}
-            onClose={() => closeItem(item.id)}
-            onClick={() => toggleActive(item.id)}
+          key={item.id}
+          label={item.label}
+          active={item.active}
+          onClose={() => closeItem(item.id)}
+          onClick={() => toggleActive(item.id)}
         />
       ))}
     </div>
   );
 };
 
+
+
+const ExploreMain = () => {
+  return (
+    <>
+      <h1 className="text-3xl font-bold mb-4">
+        探索
+      </h1>
+      {/* Search bar */}
+      <div className="flex mb-4">
+        <div className="relative flex-1 ">
+          <input type="text" placeholder="運動網的時事新聞" className="w-full p-2 pl-10 h-14 bg-gray-700 rounded-l" />
+          <Search className="h-14 absolute left-3 top-0 text-gray-400" size={20} />
+        </div>
+        <div className="flex gap-2 pr-2 items-center bg-gray-700 rounded-r">
+          <button className="h-10 bg-gray-700 p-2 "><Sliders size={20} /></button>
+          <button className="h-10 bg-[#FFFEF0] text-[#818181] px-4 py-2 rounded flex "><StarIcon/>優化提示詞</button>
+          <button className="h-10 bg-mainYellow text-[#818181] px-4 py-2 rounded flex"><SearchIcon/>生成</button>
+        </div>
+      </div>
+
+      {/* Tags */} 
+      <NavigationBar/>
+
+      {/* News grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[...Array(9)].map((_, i) => (
+          <Link to={`/explore/news/${i + 1}`} key={i} className="bg-gray-800 p-4 rounded hover:bg-gray-700 transition-colors">
+            <img src={`https://picsum.photos/300/200?random=${i}`} alt="News thumbnail" className="w-full h-40 object-cover mb-2 rounded" />
+            <h3 className="font-bold mb-1">新聞標題 {i + 1}</h3>
+            <p className="text-sm text-gray-400">新聞摘要...</p>
+          </Link>
+        ))}
+      </div>
+    </>
+  );
+};
+
 const Explore = () => {
-    return (
-        <>
-            <h1 className="text-3xl font-bold mb-4">
-                探索
-            </h1>
-            {/* Search bar */}
-            <div className="flex mb-4">
-                <div className="relative flex-1 ">
-                  <input type="text" placeholder="運動網的時事新聞" className="w-full p-2 pl-10 h-14 bg-gray-700 rounded-l" />
-                  <Search className="h-14 absolute left-3 top-0 text-gray-400" size={20} />
-                </div>
-                <div className="flex gap-2 pr-2 items-center bg-gray-700 rounded-r">
-                  <button className="h-10 bg-gray-7 00 p-2 "><Sliders size={20} /></button>
-                  <button className="h-10 bg-[#FFFEF0]  text-[#818181] px-4 py-2 rounded flex "><StarIcon/>優化提示詞</button>
-                  <button className="h-10 bg-mainYellow text-[#818181] px-4 py-2 rounded flex"><SearchIcon/>生成</button>
-                </div>
-            </div>
-
-            {/* Tags */} 
-            <NavigationBar/>
-
-            {/* News grid */}
-            <div className="grid grid-cols-3 gap-4">
-                {/* Replace with actual news items */}
-                {[...Array(9)].map((_, i) => (
-                <div key={i} className="bg-gray-800 p-4 rounded">
-                    <img src={`https://picsum.photos/300/200?random=${i}`} alt="News thumbnail" className="w-full h-40 object-cover mb-2 rounded" />
-                    <h3 className="font-bold mb-1">新聞標題 {i + 1}</h3>
-                    <p className="text-sm text-gray-400">新聞摘要...</p>
-                </div>
-                ))}
-            </div>
-        </>
-    );
-}
+  return (
+    <Routes>
+      <Route index element={<ExploreMain />} />
+      <Route path="news/:id" element={<NewsDetail />} />
+    </Routes>
+  );
+};
 
 export default Explore;
