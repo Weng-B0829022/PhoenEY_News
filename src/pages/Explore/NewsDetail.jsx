@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronLeft, X, Play, Volume2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import headIcon from '../../assets/趙啟宣.png';
 const NewsDetailPage = () => {
 return (
@@ -7,14 +8,16 @@ return (
     <div className="max-w-6xl mx-auto">
         {/* 頂部導航 */}
         <div className="flex justify-between items-center mb-4">
-        <ChevronLeft className="text-mainYellow cursor-pointer" size={24} />
+        <Link to='/explore'>
+            <ChevronLeft className="text-mainYellow cursor-pointer" size={24} />
+        </Link>
         <X className="text-mainYellow cursor-pointer" size={24} />
         </div>
         <div className='flex gap-4'>
             <div className='w-2/3'>
                 {/* 視頻播放器 */}
                 <div className="relative aspect-video bg-gray-800 mb-4 rounded-lg overflow-hidden w-full">
-                    <img src="/path-to-video-thumbnail.jpg" alt="Video Thumbnail" className="w-full h-full object-cover" />
+                    <img src="https://picsum.photos/300/200?random=1" alt="Video Thumbnail" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 flex items-center justify-center">
                         <button className="bg-blue-500 rounded-full p-4">
                         <Play size={32} className="text-white" />
@@ -36,7 +39,7 @@ return (
                     <div className="flex items-center justify-between mb-2">
                         <img src={headIcon} alt="林煜泰" className="w-10 h-10 rounded-full" />
                         <span className="font-bold">林煜泰</span>
-                        <button className="bg-yellow-400 text-black px-2 py-1 rounded text-sm">追蹤</button>
+                        <button className="bg-mainYellow text-black px-2 py-1 rounded text-sm">追蹤</button>
                     </div>
                     <h3 className="font-bold mb-2">提示詞</h3>
                     <p className="text-sm text-gray-300">
