@@ -7,7 +7,7 @@ export default function NewAccount() {
 return (
     <div className="flex h-screen">
     {/* Left side - Image and text */}
-    <div className="flex-1 bg-black text-white p-12 flex flex-col justify-between relative overflow-hidden">
+    <div className="flex-1 bg-bg-bgPrimary text-white p-12 flex flex-col justify-between relative overflow-hidden">
         <img 
         style={{backgroundImage: `url(${loginBackground})`}}
         className="absolute inset-0 w-full h-full object-cover"
@@ -30,7 +30,7 @@ return (
     </div>
 
     {/* Right side - Login form */}
-    <div className="flex-1 flex items-center justify-center bg-gray-900">
+    <div className="flex-1 flex items-center justify-center bg-bgPrimary">
         <div className="w-full max-w-md p-8 space-y-8 flex-col items-center">
         <div className="w-full flex justify-center">
             <img

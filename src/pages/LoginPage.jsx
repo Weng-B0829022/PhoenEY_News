@@ -30,7 +30,7 @@ return (
     </div>
 
     {/* Right side - Login form */}
-    <div className="flex-1 flex items-center justify-center bg-gray-900">
+    <div className="flex-1 flex items-center justify-center bg-bgPrimary">
         <div className="w-full max-w-md p-8 space-y-8 flex-col items-center">
         <div className="w-full flex justify-center">
             <img
