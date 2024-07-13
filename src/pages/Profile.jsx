@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Publish from './Profile/Calender';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Layout from '../Layout';
 
 const newsItems = [
   {
@@ -51,6 +52,7 @@ const DashboardLayout = () => {
   }
 
   return (
+    <Layout>
     <div className="w-full h-screen bg-bgPrimary text-white p-4">
       <div className="flex flex-col h-full">
         {/* Upper half */}
@@ -108,6 +110,7 @@ const DashboardLayout = () => {
         </div>
       </div>
     </div>
+    </Layout>
   );
 };
 

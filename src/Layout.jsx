@@ -10,10 +10,10 @@ const LayoutPage = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const navItems = [
-    { key: 'personal', label: '個人' },
+    { key: 'profile', label: '個人' },
     { key: 'explore', label: '探索' },
     { key: 'home', label: '首頁' },
-    { key: 'material', label: '素材' },
+    { key: 'resources', label: '素材' },
   ];
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
