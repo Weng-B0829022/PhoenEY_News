@@ -93,7 +93,7 @@ const LayoutPage = ({ children }) => {
                 </li>
               ))}
             </ul>
-            <ul className="space-y-2 mb-4">
+            <ul className="space-y-2 mb-4 ">
               <li>
                 <Link
                   to="/settings"
@@ -109,7 +109,7 @@ const LayoutPage = ({ children }) => {
                 </Link>
               </li>
               <li
-                className={`py-2 px-4 cursor-pointer transition-colors hover:bg-gray-700`}
+                className={`py-2 px-4 cursor-pointer transition-colors hover:bg-gray-700 `}
                 onClick={() => {
                   // Handle logout logic here
                   setIsSidebarOpen(false);

@@ -81,15 +81,15 @@ const ExploreMain = () => {
             探索熱門新聞
         </h1>
         {/* Search bar */}
-        <div className="flex ">
+        <div className='flex w-full'>
             <div className="relative flex-1 ">
-            <input type="text" placeholder="運動網的時事新聞" className="w-full p-2 pl-10 h-14 bg-gray-700 rounded-l-lg" />
-            <Search className="h-14 absolute left-3 top-0 text-gray-400" size={20} />
+                <input type="text" placeholder="運動網的時事新聞" className="w-full p-2 pl-10 h-14 bg-gray-700 rounded-lg md:rounded-l-lg md:rounded-r-none" />
+                <Search className="h-14 absolute left-3 top-0 text-gray-400" size={20} />
             </div>
-            <div className="flex gap-2 pr-2 items-center bg-gray-700 rounded-r">
-            <button className="h-10 bg-gray-700 p-2 "><Sliders size={20} /></button>
-            <button className="h-10 bg-[#FFFEF0] text-[#818181] px-4 py-2 rounded-lg flex "><StarIcon/>優化提示詞</button>
-            <button className="h-10 bg-mainYellow text-[#818181] px-4 py-2 rounded-lg flex"><SearchIcon/>生成</button>
+            <div className="hidden md:flex gap-2 pr-2 items-center bg-gray-700 rounded-r">
+                <button className="h-10 bg-gray-700 p-2 "><Sliders size={20} /></button>
+                <button className="h-10 bg-[#FFFEF0] text-[#818181] px-4 py-2 rounded-lg flex "><StarIcon/>優化提示詞</button>
+                <button className="h-10 bg-mainYellow text-[#818181] px-4 py-2 rounded-lg flex"><SearchIcon/>生成</button>
             </div>
         </div>
 
