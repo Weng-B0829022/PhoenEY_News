@@ -53,12 +53,10 @@ const DashboardLayout = () => {
 
   return (
     <Layout>
-    <div className="w-full h-screen bg-bgPrimary text-white p-4">
-      <div className="flex flex-col h-full">
-        {/* Upper half */}
-        <div className="flex h-1/2 mb-4">
-          {/*------------------------------------------------------Left upper: Date picker */}
-          <div className="w-2/5 bg-bgSecondary rounded-lg p-4 mr-4">
+      <div className="w-full min-h-screen bg-bgPrimary text-white p-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 md:grid-rows-2 gap-4 h-full">
+          {/* Left upper: Date picker */}
+          <div className="md:col-span-2 bg-bgSecondary rounded-lg p-4">
             <h2 className="text-xl font-bold mb-2 text-mainYellow">新聞行事曆</h2>
             <div className="flex items-center justify-between mb-2">
               <button onClick={prevMonth}><ChevronLeft /></button>
@@ -73,8 +71,8 @@ const DashboardLayout = () => {
                 <div key={`empty-${index}`} className="p-1"></div>
               ))}
               {[...Array(daysInMonth)].map((_, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="p-1 hover:bg-gray-700 rounded cursor-pointer"
                   onClick={() => handleDateClick(index + 1)}
                 >
@@ -83,16 +81,15 @@ const DashboardLayout = () => {
               ))}
             </div>
           </div>
+
           {/* Right upper: Content */}
-          <div className="w-3/5 bg-bgSecondary rounded-lg p-4">
+          <div className="md:col-span-3 bg-bgSecondary rounded-lg p-4">
             <h2 className="text-xl font-bold mb-2 text-mainYellow">製作中</h2>
-            
+            {/* Add content here */}
           </div>
-        </div>
-        {/* Lower half */}
-        <div className="flex h-1/2">
-          {/*------------------------------------------------------Left lower: Content */}
-          <div className="w-3/5 bg-bgSecondary rounded-lg p-4 mr-4">
+
+          {/* Left lower: Content */}
+          <div className="md:col-span-3 bg-bgSecondary rounded-lg p-4">
             <h2 className="text-xl font-bold mb-2 text-mainYellow">發布新聞</h2>
             <div className="p-4 rounded-lg">
               <div>
@@ -102,14 +99,14 @@ const DashboardLayout = () => {
               </div>
             </div>
           </div>
+
           {/* Right lower: Content */}
-          <div className="w-2/5 bg-bgSecondary rounded-lg p-4">
+          <div className="md:col-span-2 bg-bgSecondary rounded-lg p-4">
             <h2 className="text-xl font-bold mb-2 text-mainYellow">流量 (過去 預測)</h2>
             {/* Add content here */}
           </div>
         </div>
       </div>
-    </div>
     </Layout>
   );
 };

@@ -2,6 +2,8 @@ import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Image from '../../assets/趙啟宣.png';
+import LoadingAndImg from '../components/LoadingAndImg';
+
 const User = () => {
   return (
     <div className="bg-bgPrimary text-white min-h-screen p-8">
@@ -11,7 +13,7 @@ const User = () => {
       {/* Header */}
       <div className="flex items-center justify-between bg-bgPrimary text-white p-4">
       <div className="flex items-center space-x-4">
-        <img 
+        <LoadingAndImg
           src={Image}
           alt="Profile" 
           className="w-16 h-16 rounded-full object-cover"
@@ -53,8 +55,7 @@ const User = () => {
           {/* News items */}
           {[...Array(8)].map((_, index) => (
             <div key={index} className="relative">
-              <img src={`https://picsum.photos/300/200?random=${index + 1}`} alt={`News ${index + 1}`} className="w-full h-60 object-cover rounded-lg" />
-
+              <LoadingAndImg src={`https://picsum.photos/300/200?random=${index + 1}`} alt={`News ${index + 1}`} className="w-full h-60 object-cover rounded-lg" />
             </div>
           ))}
         </div>

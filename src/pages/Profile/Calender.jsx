@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronLeft } from 'lucide-react';
+import Layout from '../../Layout';
 
 const ImageGrid = ({ items }) => (
   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -27,6 +28,7 @@ const Publish = ({ date, onBack }) => {
   ];
 
   return (
+    <Layout>
     <div className="w-full min-h-screen bg-bg-bgPrimary text-white p-6">
       <div className="mb-6">
         <button onClick={onBack} className="text-mainYellow mb-2">
@@ -45,6 +47,7 @@ const Publish = ({ date, onBack }) => {
         <ImageGrid items={unpublishedNews} />
       </div>
     </div>
+    </Layout>
   );
 };
 
