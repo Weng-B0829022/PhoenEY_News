@@ -1,6 +1,6 @@
 // router.js
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Layout from './Layout';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
@@ -13,7 +13,8 @@ const AppRouter = () => {
       <Router>
         <Routes>
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
+
             <Route path="/profile" element={<Profile />} />
             <Route path="/explore/*" element={<Explore />} />
             <Route path="/settings" element={<Settings />} />
