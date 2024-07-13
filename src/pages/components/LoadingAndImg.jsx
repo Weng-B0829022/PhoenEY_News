@@ -10,11 +10,10 @@ const ImgWithLoading = ({ src, alt, className }) => {
   return (
     <div >
       {isLoading && (
-        <img
-          src='../../../public/Loading.png'
-          alt={alt}
-          className={`${className}`}
-        />
+        <svg xmlns="http://www.w3.org/2000/svg" className={`${className}`}>
+          <rect width="100%" height="100%" fill="#2F384E" />
+        </svg>
+
       )}
       <img
         src={src}
