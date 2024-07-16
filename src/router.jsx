@@ -19,7 +19,8 @@ const AppRouter = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/explore/*" element={<Explore />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/resources" element={<Resource/>} />
+            <Route path="/resources/*" element={<Resource/>} />
+
         </Routes>
       </Router>
     );
