@@ -4,6 +4,10 @@ import loginBackground from '../assets/login-background.webp';
 import logo from '../assets/logo.png';
 import GoogleSvg from '../svg/GoogleSvg';
 import FacebookSvg from '../svg/FacebookSvg';
+import OAuthLogin from './login/OAuth';
+import { config } from '../../config.js';
+
+const clientId = config.googleClientId;
 
 export default function LoginPage() {
     const [register, setRegister] = useState(false);
@@ -68,7 +72,7 @@ export default function LoginPage() {
                 </div>
             </div> :
             <div className="flex-1 flex items-center justify-center bg-bgPrimary"> {/* Right side - Regist form */}
-                <div className="w-full max-w-md p-8 space-y-8 flex-col items-center">
+                <div className="w-full max-w-md pr-8 pl-8 space-y-4 flex-col items-center">
                     <div className="w-full flex justify-center">
                         <img
                             src={logo}
@@ -103,19 +107,20 @@ export default function LoginPage() {
                     </button>
                     </div>
                 </form>
-                <div className="mt-6 flex justify-center space-x-4">
+                <div className="mt-4 flex justify-center space-x-4">
                     <div className="mt-2 flex-grow h-px bg-gray-300"></div>
                     <span className="px-4 text-sm text-mainYellow font-medium">or</span>
                     <div className="mt-2 flex-grow h-px bg-gray-300"></div>
                 </div>
-                <div className="mt-6 flex justify-center space-x-4">
+                <div className="mt-4 flex-row items-center justify-center space-x-4 space-y-4">
                     <button className="flex w-full items-center justify-center h-14 rounded-[8px] bg-[#2F384E] text-[#B6BFD4]">
                         <FacebookSvg/>
                         以Facebook繼續
                     </button>
-                        <button className="flex w-full items-center justify-center h-14 rounded-[8px] bg-[#2F384E] text-[#B6BFD4]">
-                        <GoogleSvg/>以Google繼續
-                    </button>
+                    <OAuthLogin 
+                        clientId={clientId}
+                        redirectUri="/explore"
+                    />
                 </div>
                 <div className="mt-6 text-center text-sm">
                     <span className="text-gray-400">還沒有帳號嗎？</span>

@@ -1,13 +1,22 @@
 // LayoutPage.js
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, createContext, useContext } from 'react';
+import { Link, useLocation} from 'react-router-dom';
 import { Bell, Mail, ChevronDown, Menu, X } from 'lucide-react';
 import logo from './assets/logo.png';
 import headIcon from './assets/趙啟宣.png';
 
+// 創建一個 Context存全局使用者資料包括頭像名城追蹤等等等
+
+const UserContext = createContext();
+
 const LayoutPage = ({ children }) => {
   const [activeTab, setActiveTab] = useState('explore');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userInfo, setUserInfo] = useState({
+    name: '趙啟宣',
+    avatar: headIcon,
+    following: [],  // 這裡可以添加追蹤對象的數組
+  });
 
   const navItems = [
     { key: 'profile', label: '個人' },
@@ -47,8 +56,8 @@ const LayoutPage = ({ children }) => {
           <Mail size={20} className="hidden sm:block" />
           <Bell size={20} className="hidden sm:block" />
           <div className="flex items-center">
-            <img src={headIcon} alt="趙啟宣" className="h-8 w-8 rounded-full mr-2" />
-            <span className="hidden sm:inline">趙啟宣</span>
+            <img src={userInfo.avatar} alt="趙啟宣" className="h-8 w-8 rounded-full mr-2" />
+            <span className="hidden sm:inline">{userInfo.name}</span>
             <ChevronDown size={16} className="hidden sm:block" />
           </div>
         </div>
@@ -65,8 +74,8 @@ const LayoutPage = ({ children }) => {
           </div>
           <div className="p-4 mb-6">
             <Link to='/settings' onClick={()=>(setIsSidebarOpen(false))}>
-              <img src={headIcon} alt="趙啟宣" className="h-24 w-24 rounded-full mx-auto mb-2" />
-              <h2 className="text-center text-xl">趙啟宣</h2>
+              <img src={userInfo.avatar} alt="趙啟宣" className="h-24 w-24 rounded-full mx-auto mb-2" />
+              <h2 className="text-center text-xl">{userInfo.name}</h2>
             </Link>
           </div>
           <nav className="flex-1 flex flex-col justify-between overflow-y-auto">
@@ -130,9 +139,11 @@ const LayoutPage = ({ children }) => {
         )}
 
         {/* Main area */}
-        <main className="flex-1 p-6 overflow-auto">
-          {children}
-        </main>
+        <UserContext.Provider value={userInfo}>
+          <main className="flex-1 p-6 overflow-auto">
+            {children}
+          </main>
+        </UserContext.Provider>
       </div>
     </div>
   );
