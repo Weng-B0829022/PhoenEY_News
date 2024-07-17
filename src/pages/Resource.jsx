@@ -49,9 +49,20 @@ const ResourceMain = () => {
     { id: 1, label: '圖片', active: true, category: 'image', datas: [
       'https://picsum.photos/300/200?random=1',
       'https://picsum.photos/300/200?random=7',
+      'https://picsum.photos/300/200?random=10',
+      'https://picsum.photos/300/200?random=72',
     ] },
     { id: 2, label: '主播', active: true, category: 'host', datas: [
       'https://picsum.photos/300/200?random=99',
+      'https://picsum.photos/300/200?random=959',
+      'https://picsum.photos/300/200?random=199',
+      'https://picsum.photos/300/200?random=99',
+      'https://picsum.photos/300/200?random=969',
+      'https://picsum.photos/300/200?random=19',
+      'https://picsum.photos/300/200?random=959',
+      'https://picsum.photos/300/200?random=59',
+      'https://picsum.photos/300/200?random=109',
+
     ] },
     { id: 3, label: '影片', active: true, category: 'video', datas: [
       'https://picsum.photos/300/200?random=2',
@@ -85,35 +96,66 @@ const ResourceMain = () => {
       <NavigationBar items={items} setItems={setItems}/>
 
       {/* News grid */}
-      {items.filter(item => item.active).map((item) => (
-        <div key={item.id}>
-          <h2 className="text-2xl font-bold mb-4">{item.label}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-            {item.datas.map((data, i) => (
-              <NewsItem key={i} index={i} src={data} category={item.category} />
-            ))}
-          </div>
+      {/* 圖片 */}
+      {items[0].active && 
+      <div className="mt-4">
+        <h2 className="text-2xl font-bold mb-4">{items[0].label}</h2>
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-2 ">
+          {items[0].datas.map((data, i) => (
+            <Link key={i} to={`/resources/${data.category}/${i + 1}`} className="w-full h-full rounded-lg transition-colors ">
+              <div className='relative'>
+                <LoadingAndImg 
+                  src={data}
+                  alt="News thumbnail"
+                  className="rounded-lg w-full h-full"
+                />
+              </div>
+            </Link>
+          ))}
         </div>
-      ))}
+      </div>}
+      {/* 主播 */}
+      {items[1].active && 
+      <div className="mt-4">
+        <h2 className="text-2xl font-bold mb-4">{items[1].label}</h2>
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-8 gap-4 mt-2 ">
+          {items[1].datas.map((data, i) => (
+            <div className='w-full h-full flex justify-center items-center'>
+              <div key={i} className='relative w-32 h-32 ' onClick={()=>(window.location.href = `/resources/${data.category}/${i + 1}`)}>
+                <LoadingAndImg 
+                  src={data}
+                  alt="News thumbnail"
+                  className="rounded-full w-32 h-32 cursor-pointer"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>}
+      {/* 影片 */}
+      {items[2].active && 
+      <div className="mt-4">
+        <h2 className="text-2xl font-bold mb-4">{items[2].label}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          {items[2].datas.map((data, i) => (
+            <div key={i}></div>
+          ))}
+        </div>
+      </div>}
+      {/* 文字 */}
+      {items[3].active && 
+      <div className="mt-4">
+        <h2 className="text-2xl font-bold mb-4">{items[3].label}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          {items[3].datas.map((data, i) => (
+            <div key={i}></div>
+          ))}
+        </div>
+      </div>}
     </>
   );
 };
 
-const NewsItem = ({ index, src, category }) => { 
-  return (
-    <div>
-      <Link to={`/resources/${category}/${index + 1}`} className="w-full h-full rounded-lg transition-colors">
-        <div className='relative'>
-          <LoadingAndImg
-            src={src}
-            alt="News thumbnail"
-            className="rounded-lg w-full h-full"
-          />
-        </div>
-      </Link>
-    </div>
-  );
-};
 
 const Resource = () => {
   return (

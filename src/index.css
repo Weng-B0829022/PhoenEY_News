@@ -9,16 +9,16 @@
 
 .custom-scrollbar {
     @apply overflow-x-auto;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar {
+}
+
+.custom-scrollbar::-webkit-scrollbar {
     @apply h-1.5 bg-transparent;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb {
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
     @apply bg-bgSecondary rounded-full;
-  }
-  
-  .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
     @apply bg-bgSecondary;
-  }
+}
