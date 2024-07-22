@@ -51,11 +51,11 @@ const User = () => {
         </div>
 
         {/* News grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2">
           {/* News items */}
           {[...Array(8)].map((_, index) => (
-            <div key={index} className="relative">
-              <LoadingAndImg src={`https://picsum.photos/300/200?random=${index + 1}`} alt={`News ${index + 1}`} className="w-full h-60 object-cover rounded-lg" />
+            <div key={index} className="relative h-52">
+              <LoadingAndImg src={`https://picsum.photos/300/200?random=${index + 1}`} alt={`News ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
             </div>
           ))}
         </div>

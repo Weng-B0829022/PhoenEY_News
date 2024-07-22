@@ -18,7 +18,7 @@ const ImgWithLoading = ({ src, alt, className }) => {
   }, [src]);
 
   return (
-    <div className={className}>
+    <div className='w-full h-full'>
       {isLoading ? (
         <svg xmlns="http://www.w3.org/2000/svg" className={`${className}`}>
           <rect width="100%" height="100%" fill="#2F384E" />
@@ -27,7 +27,7 @@ const ImgWithLoading = ({ src, alt, className }) => {
         <img
           src={imgSrc}
           alt={alt}
-          className={`w-full h-full object-cover ${className}`}
+          className={`object-cover ${className}`}
         />
       )}
     </div>
