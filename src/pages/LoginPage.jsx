@@ -25,16 +25,16 @@ export default function LoginPage() {
                     <div className="absolute top-6 left-6 flex items-center space-x-4">
                         <img
                         src={logo}
-                        alt="PhoenEY Logo"
+                        alt="phoenEX Logo"
                         className="w-10 h-10" // 使用 Tailwind 類來設置寬度和高度
                         />
-                        <p className="text-xl text-white">PhoenEY</p>
+                        <p className="text-xl text-white">phoenEX</p>
                     </div>
                 </div>
                 <div className="relative z-10 h-full flex flex-col mt-20 text-white text-center">
                     
                     <h1 className="text-5xl font-bold mb-4">Get all the news</h1>
-                    <p className="text-xl">By PhoenEY</p>
+                    <p className="text-xl">By phoenEX</p>
                 </div>
             </div>
 
@@ -48,7 +48,7 @@ export default function LoginPage() {
                     <div className="w-full flex justify-center">
                         <img
                             src={logo}
-                            alt="PhoenEY Logo"
+                            alt="phoenEX Logo"
                             className="w-14 h-14"
                         />
                     </div>
@@ -76,7 +76,7 @@ export default function LoginPage() {
                     <div className="w-full flex justify-center">
                         <img
                             src={logo}
-                            alt="PhoenEY Logo"
+                            alt="phoenEX Logo"
                             className="w-14 h-14"
                         />
                     </div>
