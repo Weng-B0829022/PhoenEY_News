@@ -48,8 +48,8 @@ const LayoutPage = ({ children }) => {
             <Menu size={24} />
           </button>
           <Link to="/explore" className='flex'>
-            <img src={logo} alt="PhoenEY" className="h-8 mr-2" />
-            <span className="text-xl font-bold">PhoenEY</span>
+            <img src={logo} alt="PhoenEX" className="h-8 mr-2" />
+            <span className="text-xl font-bold">PhoenEX</span>
           </Link>
         </div>
         <div className="flex items-center space-x-4">

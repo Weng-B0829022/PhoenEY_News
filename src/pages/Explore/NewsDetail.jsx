@@ -2,6 +2,9 @@ import React, { useState , useRef, useEffect} from 'react';
 import { ChevronLeft, ChevronRight, X, Play, Volume2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import headIcon from '../../assets/趙啟宣.png';
+import LoadingAndImg from '../components/LoadingAndImg';
+
+
 const NewsDetailPage = () => {
     
 return (
@@ -62,10 +65,10 @@ return (
         {/* 相關新聞 */}
         <div>
         <h3 className="font-bold text-xl mb-4">相關新聞</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-            <div key={item} className="bg-gray-800 rounded-lg overflow-hidden">
-                <img src={`https://picsum.photos/300/200?random=${item}`} alt={`News ${item}`} className="w-full h-60 object-cover" />
+            <div key={item} className="bg-gray-800 h-52 rounded-lg overflow-hidden">
+                <LoadingAndImg src={`https://picsum.photos/300/200?random=${item}`} alt={`News ${item}`} className="w-full h-full object-cover" />
 
             </div>
             ))}
@@ -129,7 +132,7 @@ const ImageBrowser = () => {
     <div className="w-full max-w-2xl mx-auto">
       {/* 主要圖片顯示區域 */}
       <div className="relative aspect-video bg-gray-800 mb-4 rounded-lg overflow-hidden w-full">
-        <img src={selectedImage} alt="Main Image" className="w-full h-full object-cover" />
+        <LoadingAndImg src={selectedImage} alt="Main Image" className="w-full h-full object-cover" />
         <div className="absolute inset-0 flex items-center justify-center">
           <button className="bg-blue-500 rounded-full p-4">
             <Play size={32} className="text-white" />
@@ -163,7 +166,7 @@ const ImageBrowser = () => {
           onMouseMove={handleMouseMove}
         >
           {images.map((image, index) => (
-            <img
+            <LoadingAndImg
               src={image}
               key={index}
               className={`flex-shrink-0 w-24 h-16 bg-gray-700 rounded transition-all duration-200 ${

@@ -99,7 +99,7 @@ const ExploreMain = () => {
         <NavigationBar/>
 
         {/* News grid */}
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2">
             {[...Array(9)].map((_, i) => (
                 <NewsItem key={i} index={i} />
             ))}
@@ -112,7 +112,7 @@ const ExploreMain = () => {
 const NewsItem = ({ index }) => { 
     return (
       <Link to={`/explore/news/${index + 1}`} className=" w-full h-full rounded-lg transition-colors">
-        <div className='relative'>
+        <div className='relative w-32px h-52'>
             <LoadingAndImg
                 src={`https://picsum.photos/300/200?random=${index}`}
                 alt="News thumbnail"
