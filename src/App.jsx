@@ -4,8 +4,8 @@ function App() {
 
   return (
     <>
-      {/* <Router /> */}
-      <APISimulation />
+      {/* <APISimulation /> */}
+      <Router />
     </>
   )
 }
