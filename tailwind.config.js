@@ -9,7 +9,10 @@ module.exports = {
         clickYellow: '#ffe32b',
         bgPrimary:'#0B111F',
         bgSecondary:'#2F384E',
-        sideBar:'#131E33'
+        sideBar:'#131E33',
+        //  淺色背景 (dashboard)
+        bgPrimaryLight:'#FFFFFF',
+        sideBarLight:'#E4E8EE'
       },
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],
