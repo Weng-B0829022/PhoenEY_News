@@ -39,11 +39,13 @@ const CreateContent = () => {
                     updateState={updateState}
                 />
 
+                {/* 搜尋 */}
                 <IntegratedNewsTopicInput
                     topicKeyword={state.topicKeyword}
                     updateState={updateState}
                 />
 
+                {/* 輪播元件 */}
                 <Repeat
                     isButtonClicked={state.isRepeatButtonClicked}
                     updateState={updateState}
@@ -131,7 +133,7 @@ const IntegratedNewsTopicInput = ({ topicKeyword, updateState }) => {
                 value={topicKeyword}
                 onChange={(e) => updateState('topicKeyword', e.target.value)}
                 placeholder="輸入想要生成新聞主題的關鍵字" 
-                className="w-full p-2 pl-10 sm:pl-12 h-10 sm:h-14 bg-bgPrimaryLight rounded-lg text-textLight text-sm sm:text-base border border-gray-300" 
+                className="w-full p-2 pl-10 sm:pl-12 h-10 sm:h-14 bg-bgPrimaryLight rounded-lg text-textLight text-sm sm:text-base border-2 border-gray-100 focus:outline-none focus:ring-0 focus:ring-gray-100  transition duration-150 ease-in-out"
             />
             <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
         </div>
