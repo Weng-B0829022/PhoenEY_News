@@ -10,9 +10,10 @@ module.exports = {
         bgPrimary:'#0B111F',
         bgSecondary:'#2F384E',
         sideBar:'#131E33',
-        //  淺色背景 (dashboard)
+        //  淺色背景 (admin)
         bgPrimaryLight:'#FFFFFF',
-        sideBarLight:'#E4E8EE'
+        sideBarLight:'#E4E8EE',
+        textLight:'#131E33'
       },
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],

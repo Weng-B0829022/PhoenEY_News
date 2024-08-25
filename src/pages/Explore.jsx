@@ -126,12 +126,12 @@ const NewsItem = ({ index }) => {
 const Explore = () => {
     return (
         <Layout>
-        <Routes>
-            <Route index element={<ExploreMain />} />
-            <Route path="news/:id" element={<NewsDetail />} />
-            {/*還要討論*/}
-            <Route path="user/:id" element={<UserPage />} />
-        </Routes>
+            <Routes>
+                <Route index element={<ExploreMain />} />
+                <Route path="news/:id" element={<NewsDetail />} />
+                {/*還要討論*/}
+                <Route path="user/:id" element={<UserPage />} />
+            </Routes>
         </Layout>
     );
 };

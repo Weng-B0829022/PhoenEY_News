@@ -8,7 +8,7 @@ import Explore from './pages/Explore';
 import Settings from './pages/Settings';
 import LoginPage from './pages/LoginPage';
 import Resource from './pages/Resource';
-import Dashboard from './pages/Dashboard';
+import Admin from './pages/Admin';
 
 const AppRouter = () => {
     return (
@@ -21,7 +21,7 @@ const AppRouter = () => {
             <Route path="/explore/*" element={<Explore />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/resources/*" element={<Resource/>} />
-            <Route path="/dashboard/:userId" element={<Dashboard />} />
+            <Route path="/admin/*" element={<Admin />} />
         </Routes>
       </Router>
     );
