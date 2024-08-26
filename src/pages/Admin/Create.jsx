@@ -144,7 +144,7 @@ const IntegratedNewsTopicInput = ({ topicKeyword, updateState }) => {
 const Repeat = ({ isButtonClicked, updateState }) => {
     return (
         <div
-            className={`p-4 rounded-md mb-6 border-2 border-neutral-100 cursor-pointer group hover:border-blue-400 ${isButtonClicked ? 'border-blue-400 text-blue-500 bg-blue-50' : 'border-gray-700 bg-bgPrimaryLight text-textLight'} hover:bg-blue-50 hover:text-blue-500`}
+            className={`p-4 rounded-md mb-6 border-2 hover:border-neutral-100 cursor-pointer group border-blue-400 ${isButtonClicked ? 'border-blue-400 text-blue-500 bg-blue-50' : 'border-gray-700 bg-bgPrimaryLight text-textLight'} hover:bg-blue-50 hover:text-blue-500`}
             onClick={() => updateState('isRepeatButtonClicked', !isButtonClicked)}>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 ml-2 sm:ml-4">24小時輪播</h1>
             <p className={`text-xs sm:text-sm lg:text-base ml-2 sm:ml-4 group-hover:text-blue-500 ${isButtonClicked ? 'text-blue-500' : 'text-textLight'} `}>
@@ -172,7 +172,7 @@ const ModeSelector = ({ selectedMode, updateState }) => {
                         selectedMode === mode.name 
                         ? 'bg-blue-50 text-blue-500 border-blue-400' 
                         : 'border-gray-300 text-textLight'
-                    } font-bold border-2 border-neutral-100 cursor-pointer rounded-md hover:bg-blue-50 hover:text-blue-500 hover:border-blue-400`}
+                    } font-bold border-2 hover:border-neutral-100 cursor-pointer rounded-md hover:bg-blue-50 hover:text-blue-500 border-blue-400`}
                 >
                     <div className="text-lg sm:text-xl lg:text-2xl mb-1 sm:mb-2">
                         {mode.name}
