@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
+import getData from '../../../features/data/getData';
+import { executeNewsApi, executeNewsGen } from '../../../features/data/genStory';
+import login from '../../../features/auth/login';
 
-// 主要的 CreateContent 組件
 const CreateContent = () => {
     const [state, setState] = useState({
         newsTopic: 'international',
@@ -11,18 +13,61 @@ const CreateContent = () => {
         isRepeatButtonClicked: false,
         selectedMode: '無分類'
     });
+
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [currentStep, setCurrentStep] = useState(0);
+    const [elapsedTime, setElapsedTime] = useState(0);
+    const [newsResults, setNewsResults] = useState(null);
+
     useEffect(() => {
         console.log(state);
-    },[state]);
+    }, [state]);
+
+    useEffect(() => {
+        login('testuser', 'testpassword');
+        getData('asd');
+    }, []);
 
     const updateState = (key, value) => {
         setState(prevState => ({ ...prevState, [key]: value }));
     };
 
+    const handleGenerateResult = async () => {
+        setIsGenerating(true);
+        setCurrentStep(1);
+        setElapsedTime(0);
+        setNewsResults(null);
+
+        const timer = setInterval(() => {
+            setElapsedTime(prev => prev + 1);
+        }, 1000);
+
+        try {
+            // Execute News API
+            const newsApiResult = await executeNewsApi(state.topicKeyword);
+            console.log('News API 結果:', newsApiResult);
+            
+            // Update step after News API is complete
+            setCurrentStep(2);
+            setElapsedTime(0);
+
+            // Execute News Gen
+            const newsGenResult = await executeNewsGen();
+            console.log('News Gen 結果:', newsGenResult);
+
+            setNewsResults({ newsApiResult, newsGenResult });
+        } catch (error) {
+            console.error('執行新聞函數時發生錯誤:', error);
+        } finally {
+            clearInterval(timer);
+            setIsGenerating(false);
+            setCurrentStep(0);
+        }
+    };
+
     return (
         <div className="flex justify-center items-center min-h-screen w-full px-4 py-8 sm:px-6 lg:px-8">
             <div className="w-full max-w-6xl">
-                {/* 頁面標題和說明 */}
                 <div className="text-center mb-8 sm:mb-10">
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4 text-textLight">
                         新建內容
@@ -31,7 +76,7 @@ const CreateContent = () => {
                         除無分鏡模式外，其餘三者模式，將可依選擇的模式進行不同程度的分鏡調整，並含有時間軸功能，方便新聞影片或廣告的排程
                     </p>
                 </div>
-                
+
                 <NewsDetail
                     newsTopic={state.newsTopic}
                     broadcastDate={state.broadcastDate}
@@ -39,13 +84,11 @@ const CreateContent = () => {
                     updateState={updateState}
                 />
 
-                {/* 搜尋 */}
                 <IntegratedNewsTopicInput
                     topicKeyword={state.topicKeyword}
                     updateState={updateState}
                 />
 
-                {/* 輪播元件 */}
                 <Repeat
                     isButtonClicked={state.isRepeatButtonClicked}
                     updateState={updateState}
@@ -65,10 +108,32 @@ const CreateContent = () => {
                 </div>
 
                 <div className="flex justify-center mt-6 sm:mt-8">
-                    <button className="bg-blue-600 text-white p-3 sm:p-4 rounded w-32 sm:w-40 text-sm sm:text-base">
-                        看結果
+                    <button 
+                        className={`bg-blue-600 text-white p-3 sm:p-4 rounded w-32 sm:w-40 text-sm sm:text-base ${isGenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={handleGenerateResult}
+                        disabled={isGenerating}
+                    >
+                        {isGenerating ? '生成中...' : '看結果'}
                     </button>
                 </div>
+
+                {isGenerating && (
+                    <div className="mt-4 text-center">
+                        <p>
+                            {currentStep === 1 ? '新聞獲取中...' : '分鏡稿生成中...'}
+                            已過 {elapsedTime}s ({currentStep}/2)
+                        </p>
+                    </div>
+                )}
+
+                {newsResults && (
+                    <div className="mt-6 p-4 bg-gray-100 rounded-md">
+                        <h2 className="text-xl font-bold mb-2">新聞結果：</h2>
+                        <pre className="whitespace-pre-wrap">
+                            {JSON.stringify(newsResults, null, 2)}
+                        </pre>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -140,11 +205,10 @@ const IntegratedNewsTopicInput = ({ topicKeyword, updateState }) => {
     );
 };
 
-
 const Repeat = ({ isButtonClicked, updateState }) => {
     return (
         <div
-            className={`p-4 rounded-md mb-6 border-2 hover:border-neutral-100 cursor-pointer group border-blue-400 ${isButtonClicked ? 'border-blue-400 text-blue-500 bg-blue-50' : 'border-gray-700 bg-bgPrimaryLight text-textLight'} hover:bg-blue-50 hover:text-blue-500`}
+            className={`p-4 rounded-md mb-6 border-2 hover:border-neutral-100 cursor-pointer group border-blue-400 ${isButtonClicked ? 'border-blue-400 text-blue-500 bg-blue-50' : 'border-gray-100 bg-bgPrimaryLight text-textLight'} hover:bg-blue-50 hover:text-blue-500`}
             onClick={() => updateState('isRepeatButtonClicked', !isButtonClicked)}>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 ml-2 sm:ml-4">24小時輪播</h1>
             <p className={`text-xs sm:text-sm lg:text-base ml-2 sm:ml-4 group-hover:text-blue-500 ${isButtonClicked ? 'text-blue-500' : 'text-textLight'} `}>
@@ -184,6 +248,6 @@ const ModeSelector = ({ selectedMode, updateState }) => {
             ))}
         </div>
     );
-}
+};
 
 export default CreateContent;
