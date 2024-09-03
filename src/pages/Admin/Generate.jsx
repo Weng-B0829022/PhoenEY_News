@@ -46,10 +46,10 @@ const tvSchedule = [
 
 const Generate = () => {
     const { createdContent } = useContext(ContentContext);
+    
     //模擬訊息
     useEffect(()=>{
         storyboardData = StoryboardProcessor.processCreatedContent(createdContent);
-
     }, [createdContent])
 
     return (
@@ -171,8 +171,7 @@ const Storyboard = () => {
     const headers = ['段落', '秒數', '畫面', '畫面描述', '旁白', '字數'];
     return (
         <div>
-            <div
-                className={`p-3 sm:p-4 group mt-4 ${
+            <div className={`p-3 sm:p-4 group mt-4 ${
                     isStoryboardOpen
                     ? '' 
                     : 'border-gray-100 text-textLight hover:shadow-sm hover:border-neutral-100 hover:bg-blue-50 hover:text-blue-500'
@@ -205,9 +204,9 @@ const Storyboard = () => {
                                     <tbody>
                                         {headers.map((header, index) => (
                                         <tr key={header}>
-                                            <th className="text-center border px-4 py-2">{header}</th>
+                                            <th className="text-center border px-2 py-2">{header}</th>
                                             {storyboardData.map((scene, sceneIndex) => (
-                                            <td key={sceneIndex} className="text-center border px-4 py-2">
+                                            <td key={sceneIndex} className="text-center border px-2 py-2">
                                                 {header === '畫面' ? (
                                                 <img src={scene.畫面} alt={scene.畫面描述} className="w-44 h-auto mx-auto" />
                                                 ) : (
@@ -233,80 +232,81 @@ export default Generate;
 
 const StoryboardProcessor = {
     convertStoryboardToJson(storyboardText) {
-      const cleanedText = storyboardText.replace(/^(Storyboard:|\*\*Storyboard[^*]*\*\*)/i, '').trim();
-      const scenes = cleanedText.split(/\n\d+\n/).filter(Boolean);
-      
-      return scenes.map((scene, index) => {
-        const lines = scene.trim().split('\n');
-        const timeCode = lines[0];
-        let visualElement = '';
-        let voiceoverText = '';
+        const cleanedText = storyboardText.replace(/^(Storyboard:|\*\*Storyboard[^*]*\*\*)/i, '').trim();
+        const scenes = cleanedText.split(/\n\d+\n/).filter(Boolean);
         
-        for (let i = 1; i < lines.length; i++) {
-          if (lines[i].startsWith('Image:') || lines[i].startsWith('Video:')) {
-            visualElement = lines[i];
-          } else if (lines[i].startsWith('Voiceover Text:')) {
-            voiceoverText = lines[i].split('Voiceover Text:')[1].trim();
-          }
+        return scenes.map((scene, index) => {
+            const lines = scene.trim().split('\n');
+            const timeCode = lines[0];
+            let visualElement = '';
+            let voiceoverText = '';
+            
+            for (let i = 1; i < lines.length; i++) {
+            if (lines[i].startsWith('Image:') || lines[i].startsWith('Video:')) {
+                visualElement = lines[i];
+            } else if (lines[i].startsWith('Voiceover Text:')) {
+                voiceoverText = lines[i].split('Voiceover Text:')[1].trim();
+            }
+            }
+            
+            return {
+            sceneNumber: index + 1,
+            timeCode: timeCode,
+            visualElements: visualElement ? [{
+                type: visualElement.toLowerCase().startsWith('image:') ? 'image' : 'video',
+                content: visualElement.split(':')[1].trim()
+            }] : [],
+            voiceoverText: voiceoverText.replace(/^"|"$/g, '')
+            };
+        });
+        },
+    
+        convertArticlesToJson(data) {
+        const articles = data.data.articles;
+        return articles.map(article => ({
+            title: article.title,
+            content: article.content,
+            storyboard: this.convertStoryboardToJson(article.storyboard)
+        }));
+        },
+    
+        convertToStoryboardData(input) {
+        if (!input || typeof input !== 'object') {
+            console.error('Invalid input: expected an object');
+            return null;
         }
-        
-        return {
-          sceneNumber: index + 1,
-          timeCode: timeCode,
-          visualElements: visualElement ? [{
-            type: visualElement.toLowerCase().startsWith('image:') ? 'image' : 'video',
-            content: visualElement.split(':')[1].trim()
-          }] : [],
-          voiceoverText: voiceoverText.replace(/^"|"$/g, '')
+    
+        const defaultScene = {
+            timeCode: '0',
+            visualElements: [{ content: 'No description available' }],
+            voiceoverText: ''
         };
-      });
-    },
-  
-    convertArticlesToJson(data) {
-      const articles = data.data.articles;
-      return articles.map(article => ({
-        title: article.title,
-        content: article.content,
-        storyboard: this.convertStoryboardToJson(article.storyboard)
-      }));
-    },
-  
-    convertToStoryboardData(input) {
-      if (!input || typeof input !== 'object') {
-        console.error('Invalid input: expected an object');
-        return null;
-      }
-  
-      const defaultScene = {
-        timeCode: '0',
-        visualElements: [{ content: 'No description available' }],
-        voiceoverText: ''
-      };
-  
-      return {
-        title: input.title || 'Untitled',
-        content: input.content || '',
-        storyboard: Array.isArray(input.storyboard) ? input.storyboard.map((scene, index) => {
-          const safeScene = { ...defaultScene, ...scene };
-          return {
-            段落: (index + 1).toString().padStart(2, '0'),
-            秒數: safeScene.timeCode,
-            畫面: `https://picsum.photos/300/200?random=${index + 1}`,
-            畫面描述: safeScene.visualElements[0]?.content || 'No description available',
-            旁白: (safeScene.voiceoverText || '').replace(/^「|」$/g, ''),
-            字數: `${(safeScene.voiceoverText || '').replace(/^「|」$/g, '').length}字`
-          };
-        }) : []
-      };
-    },
-  
-    processCreatedContent(createdContent) {
-      if (createdContent) {
-        const jsonResult = this.convertArticlesToJson(createdContent.newsGenResult);
-        const storyboardData = this.convertToStoryboardData(jsonResult[0]).storyboard;
-        console.log(JSON.stringify(storyboardData, null, 2));
-        return storyboardData;
-      }
-      return [];
-    }
-  };
+    
+        return {
+            title: input.title || 'Untitled',
+            content: input.content || '',
+            storyboard: Array.isArray(input.storyboard) ? input.storyboard.map((scene, index) => {
+                const safeScene = { ...defaultScene, ...scene };
+                return {
+                    段落: (index).toString().padStart(2, '0'),
+                    秒數:  safeScene.timeCode,
+                    畫面: `https://picsum.photos/300/200?random=${index + 1}`,
+                    畫面描述: safeScene.visualElements[0]?.content || 'No description available',
+                    旁白: (safeScene.voiceoverText || '').replace(/^「|」$/g, ''),
+                    字數: `${(safeScene.voiceoverText || '').replace(/^「|」$/g, '').length}字`
+                };
+            }) : []
+        };
+        },
+    
+        processCreatedContent(createdContent) {
+        if (createdContent) {
+            const jsonResult = this.convertArticlesToJson(createdContent.newsGenResult);
+            console.log(JSON.stringify(jsonResult, null, 2));
+            const storyboardData = this.convertToStoryboardData(jsonResult[0]).storyboard;
+            console.log(JSON.stringify(storyboardData, null, 2));
+            return storyboardData.slice(1);
+        }
+            return [];
+        }
+    };
