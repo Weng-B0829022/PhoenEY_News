@@ -4,7 +4,7 @@ import loginBackground from '../assets/login-background.webp';
 import logo from '../assets/logo.png';
 import GoogleSvg from '../svg/GoogleSvg';
 import FacebookSvg from '../svg/FacebookSvg';
-import OAuthLogin from './login/OAuth';
+import OAuthLogin from './Login/OAuth.jsx';
 import { config } from '../../config.js';
 
 const clientId = config.googleClientId;

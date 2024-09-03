@@ -1,9 +1,57 @@
-import React, { useState, useRef, useEffect } from 'react';
-import Layout from '../../Layout';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import { ContentContext } from './components/Context';
 import LeftArrowIcon from '../../svg/LeftArrowSvg';
 import DownArrowIcon from '../../svg/DownArrowSvg';
 
+let storyboardData = ''
+
+const tvSchedule = [
+    [
+        { time: "01:00", screen: "https://picsum.photos/300/200?random=1" },
+        { time: "02:00", screen: "https://picsum.photos/300/200?random=2" },
+        { time: "03:00", screen: "https://picsum.photos/300/200?random=3" },
+        { time: "04:00", screen: "https://picsum.photos/300/200?random=4" },
+    ],
+    [
+        { time: "05:00", screen: "https://picsum.photos/300/200?random=5" },
+        { time: "06:00", screen: "https://picsum.photos/300/200?random=6" },
+        { time: "07:00", screen: "https://picsum.photos/300/200?random=7" },
+        { time: "08:00", screen: "https://picsum.photos/300/200?random=8" },
+    ],
+    [
+        { time: "09:00", screen: "https://picsum.photos/300/200?random=9" },
+        { time: "10:00", screen: "https://picsum.photos/300/200?random=10" },
+        { time: "11:00", screen: "https://picsum.photos/300/200?random=11" },
+        { time: "12:00", screen: "https://picsum.photos/300/200?random=12" },
+    ],
+    [
+        { time: "13:00", screen: "https://picsum.photos/300/200?random=13" },
+        { time: "14:00", screen: "https://picsum.photos/300/200?random=14" },
+        { time: "15:00", screen: "https://picsum.photos/300/200?random=15" },
+        { time: "16:00", screen: "https://picsum.photos/300/200?random=16" },
+    ],
+    [
+        { time: "17:00", screen: "https://picsum.photos/300/200?random=17" },
+        { time: "18:00", screen: "https://picsum.photos/300/200?random=18" },
+        { time: "19:00", screen: "https://picsum.photos/300/200?random=19" },
+        { time: "20:00", screen: "https://picsum.photos/300/200?random20" },
+    ],
+    [
+        { time: "21:00", screen: "https://picsum.photos/300/200?random=21" },
+        { time: "22:00", screen: "https://picsum.photos/300/200?random=22" },
+        { time: "23:00", screen: "https://picsum.photos/300/200?random=23" },
+        { time: "00:00", screen: "https://picsum.photos/300/200?random=24" },
+    ],
+];
+
 const Generate = () => {
+    const { createdContent } = useContext(ContentContext);
+    //模擬訊息
+    useEffect(()=>{
+        storyboardData = StoryboardProcessor.processCreatedContent(createdContent);
+
+    }, [createdContent])
+
     return (
         <div className="p-12">
             <div className="flex justify-between items-center">
@@ -51,45 +99,6 @@ const TimeLine = () => {
     useEffect(() => {
         contentRefs.current = contentRefs.current.slice(0, TimePeriod.length);
     }, []);
-
-    const tvSchedule = [
-        [
-        { time: "01:00", screen: "https://picsum.photos/300/200?random=1" },
-        { time: "02:00", screen: "https://picsum.photos/300/200?random=2" },
-        { time: "03:00", screen: "https://picsum.photos/300/200?random=3" },
-        { time: "04:00", screen: "https://picsum.photos/300/200?random=4" },
-        ],
-        [
-        { time: "05:00", screen: "https://picsum.photos/300/200?random=5" },
-        { time: "06:00", screen: "https://picsum.photos/300/200?random=6" },
-        { time: "07:00", screen: "https://picsum.photos/300/200?random=7" },
-        { time: "08:00", screen: "https://picsum.photos/300/200?random=8" },
-        ],
-        [
-        { time: "09:00", screen: "https://picsum.photos/300/200?random=9" },
-        { time: "10:00", screen: "https://picsum.photos/300/200?random=10" },
-        { time: "11:00", screen: "https://picsum.photos/300/200?random=11" },
-        { time: "12:00", screen: "https://picsum.photos/300/200?random=12" },
-        ],
-        [
-        { time: "13:00", screen: "https://picsum.photos/300/200?random=13" },
-        { time: "14:00", screen: "https://picsum.photos/300/200?random=14" },
-        { time: "15:00", screen: "https://picsum.photos/300/200?random=15" },
-        { time: "16:00", screen: "https://picsum.photos/300/200?random=16" },
-        ],
-        [
-        { time: "17:00", screen: "https://picsum.photos/300/200?random=17" },
-        { time: "18:00", screen: "https://picsum.photos/300/200?random=18" },
-        { time: "19:00", screen: "https://picsum.photos/300/200?random=19" },
-        { time: "20:00", screen: "https://picsum.photos/300/200?random20" },
-        ],
-        [
-        { time: "21:00", screen: "https://picsum.photos/300/200?random=21" },
-        { time: "22:00", screen: "https://picsum.photos/300/200?random=22" },
-        { time: "23:00", screen: "https://picsum.photos/300/200?random=23" },
-        { time: "00:00", screen: "https://picsum.photos/300/200?random=24" },
-        ],
-    ];
 
     const TimePeriod = [
         { Period: "深夜 01:00~04:00", click: () => handleClickTime(0), idx: 0 },
@@ -159,59 +168,7 @@ const Storyboard = () => {
         setIsStoryboardOpen(prevState => !prevState);
     };
 
-    const storyboardData = [
-        {
-        段落: "01",
-        秒數: "8s",
-        畫面: "https://picsum.photos/300/200?random=1",
-        畫面描述: "台積電總部及其先進技術",
-        旁白: "台積電是全球半導體代工龍頭，以先進製程技術聞名全球",
-        字數: "23字"
-        },
-        {
-        段落: "02",
-        秒數: "8s",
-        畫面: "https://picsum.photos/300/200?random=2",
-        畫面描述: "研發團隊與實驗室景象",
-        旁白: "研發團隊不斷突破極限，27nm 製程技術應運而生",
-        字數: "23字"
-        },
-        {
-        段落: "03",
-        秒數: "8s",
-        畫面: "https://picsum.photos/300/200?random=3",
-        畫面描述: "晶圓廠生產線上的工作場景",
-        旁白: "新製程不僅提升效能，更大幅降低功耗",
-        字數: "18字"
-        },
-        {
-        段落: "04",
-        秒數: "8s",
-        畫面: "https://picsum.photos/300/200?random=4",
-        畫面描述: "智慧手機和物聯網設備圖片",
-        旁白: "27nm製程為AI、5G等應用帶來重大突破",
-        字數: "20字"
-        },
-        {
-        段落: "05",
-        秒數: "8s",
-        畫面: "https://picsum.photos/300/200?random=5",
-        畫面描述: "台積電與國際客戶合作的場景",
-        旁白: "與全球頂尖客戶緊密合作，共創雙贏",
-        字數: "17字"
-        },
-        {
-        段落: "06",
-        秒數: "8s",
-        畫面: "https://picsum.photos/300/200?random=6",
-        畫面描述: "未來科技應用場景",
-        旁白: "27nm製程助力創新，為世界帶來更智慧的未來生活",
-        字數: "23字"
-        }
-    ];
-
     const headers = ['段落', '秒數', '畫面', '畫面描述', '旁白', '字數'];
-
     return (
         <div>
             <div
@@ -271,3 +228,85 @@ const Storyboard = () => {
 };
 
 export default Generate;
+
+
+
+const StoryboardProcessor = {
+    convertStoryboardToJson(storyboardText) {
+      const cleanedText = storyboardText.replace(/^(Storyboard:|\*\*Storyboard[^*]*\*\*)/i, '').trim();
+      const scenes = cleanedText.split(/\n\d+\n/).filter(Boolean);
+      
+      return scenes.map((scene, index) => {
+        const lines = scene.trim().split('\n');
+        const timeCode = lines[0];
+        let visualElement = '';
+        let voiceoverText = '';
+        
+        for (let i = 1; i < lines.length; i++) {
+          if (lines[i].startsWith('Image:') || lines[i].startsWith('Video:')) {
+            visualElement = lines[i];
+          } else if (lines[i].startsWith('Voiceover Text:')) {
+            voiceoverText = lines[i].split('Voiceover Text:')[1].trim();
+          }
+        }
+        
+        return {
+          sceneNumber: index + 1,
+          timeCode: timeCode,
+          visualElements: visualElement ? [{
+            type: visualElement.toLowerCase().startsWith('image:') ? 'image' : 'video',
+            content: visualElement.split(':')[1].trim()
+          }] : [],
+          voiceoverText: voiceoverText.replace(/^"|"$/g, '')
+        };
+      });
+    },
+  
+    convertArticlesToJson(data) {
+      const articles = data.data.articles;
+      return articles.map(article => ({
+        title: article.title,
+        content: article.content,
+        storyboard: this.convertStoryboardToJson(article.storyboard)
+      }));
+    },
+  
+    convertToStoryboardData(input) {
+      if (!input || typeof input !== 'object') {
+        console.error('Invalid input: expected an object');
+        return null;
+      }
+  
+      const defaultScene = {
+        timeCode: '0',
+        visualElements: [{ content: 'No description available' }],
+        voiceoverText: ''
+      };
+  
+      return {
+        title: input.title || 'Untitled',
+        content: input.content || '',
+        storyboard: Array.isArray(input.storyboard) ? input.storyboard.map((scene, index) => {
+          const safeScene = { ...defaultScene, ...scene };
+          return {
+            段落: (index + 1).toString().padStart(2, '0'),
+            秒數: safeScene.timeCode,
+            畫面: `https://picsum.photos/300/200?random=${index + 1}`,
+            畫面描述: safeScene.visualElements[0]?.content || 'No description available',
+            旁白: (safeScene.voiceoverText || '').replace(/^「|」$/g, ''),
+            字數: `${(safeScene.voiceoverText || '').replace(/^「|」$/g, '').length}字`
+          };
+        }) : []
+      };
+    },
+  
+    processCreatedContent(createdContent) {
+      if (createdContent) {
+        const jsonResult = this.convertArticlesToJson(createdContent.newsGenResult);
+        const storyboardData = this.convertToStoryboardData(jsonResult[0]).storyboard;
+        console.log(JSON.stringify(storyboardData, null, 2));
+        return storyboardData;
+      }
+      return [];
+    }
+  };

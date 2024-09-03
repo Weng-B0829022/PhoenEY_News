@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
-import getData from '../../../features/data/getData';
+//import getData from '../../../features/data/getData';
 import { executeNewsApi, executeNewsGen } from '../../../features/data/genStory';
 import login from '../../../features/auth/login';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ContentContext } from './components/Context';
 
-const CreateContent = () => {
+const Create = () => {
+    const { updateCreatedContent } = useContext(ContentContext);
+
     const [state, setState] = useState({
         newsTopic: 'international',
         broadcastDate: '',
@@ -19,13 +23,21 @@ const CreateContent = () => {
     const [elapsedTime, setElapsedTime] = useState(0);
     const [newsResults, setNewsResults] = useState(null);
 
-    useEffect(() => {
-        console.log(state);
-    }, [state]);
 
+    const navigate = useNavigate();
+    const { id } = useParams();
+
+    //傳到admin
+    useEffect(() => {
+        if (newsResults) {
+            updateCreatedContent(newsResults);
+            navigate(`/admin/generate/${id}`);
+        }
+    }, [newsResults]);
+
+    //模擬登入
     useEffect(() => {
         login('testuser', 'testpassword');
-        getData('asd');
     }, []);
 
     const updateState = (key, value) => {
@@ -45,7 +57,7 @@ const CreateContent = () => {
         try {
             // Execute News API
             const newsApiResult = await executeNewsApi(state.topicKeyword);
-            console.log('News API 結果:', newsApiResult);
+            //console.log('News API 結果:', newsApiResult);
             
             // Update step after News API is complete
             setCurrentStep(2);
@@ -53,7 +65,7 @@ const CreateContent = () => {
 
             // Execute News Gen
             const newsGenResult = await executeNewsGen();
-            console.log('News Gen 結果:', newsGenResult);
+            //console.log('News Gen 結果:', newsGenResult);
 
             setNewsResults({ newsApiResult, newsGenResult });
         } catch (error) {
@@ -250,4 +262,4 @@ const ModeSelector = ({ selectedMode, updateState }) => {
     );
 };
 
-export default CreateContent;
+export default Create;

@@ -32,20 +32,20 @@ export default async function apiRequest(endpoint, method = 'GET', body = null, 
     }
 
     try {
-        console.log(`Sending ${method} request to: ${url}`);
-        console.log('Request config:', config);
+        //console.log(`Sending ${method} request to: ${url}`);
+        //console.log('Request config:', config);
 
         const response = await fetch(url, config);
 
         if (response.status === 401 && !isRetry) {
-            console.log('Token expired, refreshing...');
+            //console.log('Token expired, refreshing...');
             await refreshAccessToken();
             return apiRequest(endpoint, method, body, requiresAuth, true);
         }
 
         return await handleResponse(response);
     } catch (error) {
-        console.error("API request error:", error);
+        //console.error("API request error:", error);
         throw error;
     }
 }
