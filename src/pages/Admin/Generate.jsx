@@ -3,8 +3,6 @@ import { ContentContext } from './components/Context';
 import LeftArrowIcon from '../../svg/LeftArrowSvg';
 import DownArrowIcon from '../../svg/DownArrowSvg';
 
-let storyboardData = ''
-
 const tvSchedule = [
     [
         { time: "01:00", screen: "https://picsum.photos/300/200?random=1" },
@@ -46,10 +44,15 @@ const tvSchedule = [
 
 const Generate = () => {
     const { createdContent } = useContext(ContentContext);
-    
+    const [storyboardData, setStoryboardData] = useState([]);//分鏡稿資料
+    const [storyboardTitle, setStoryboardTitle] = useState('');//設定主標題
+    const [selectedDataIndex, setSelectedDataIndex] = useState(0);//挑內容
     //模擬訊息
     useEffect(()=>{
-        storyboardData = StoryboardProcessor.processCreatedContent(createdContent);
+        if(createdContent){
+            setStoryboardTitle(createdContent.newsGenResult.data.articles[0].title);
+        }
+        setStoryboardData(StoryboardProcessor.processCreatedContent(createdContent));
     }, [createdContent])
 
     return (
@@ -61,10 +64,11 @@ const Generate = () => {
                 </div>
                 <p className="mt-2 text-m">播放日 2024-12-17</p>
             </div>
+
             {/*時間軸*/}
-            <TimeLine/>
+            <TimeLine createdContent={createdContent}/>
             {/*分鏡稿*/}
-            <Storyboard/>
+            <Storyboard storyboardData={storyboardData} storyboardTitle={storyboardTitle}/>
 
         </div>
     );
@@ -161,7 +165,7 @@ const TimeLine = () => {
     );
 };
 
-const Storyboard = () => {
+const Storyboard = ({storyboardData, storyboardTitle}) => {
     const [isStoryboardOpen, setIsStoryboardOpen] = useState(false);
     
     const handleClick = () => {
@@ -186,7 +190,10 @@ const Storyboard = () => {
                                 <div className='border border-gray-300 w-48 mb-4 rounded'>
                                     <div className="flex justify-between">
                                         <h1 className="text-lg font-bold p-2">主標題</h1>
-                                        <p className="text-lg p-2">這是主標題</p>
+                                        {storyboardTitle && 
+                                        <p className="text-lg p-2">
+                                            {storyboardTitle}
+                                        </p>}
                                     </div>
                                     <div className="flex justify-between">
                                         <h1 className="text-lg font-bold p-2">副標題</h1>
@@ -303,9 +310,9 @@ const StoryboardProcessor = {
         if (createdContent) {
             const jsonResult = this.convertArticlesToJson(createdContent.newsGenResult);
             console.log(JSON.stringify(jsonResult, null, 2));
-            const storyboardData = this.convertToStoryboardData(jsonResult[0]).storyboard;
+            const storyboardData = this.convertToStoryboardData(jsonResult[4]).storyboard;
             console.log(JSON.stringify(storyboardData, null, 2));
-            return storyboardData.slice(1);
+            return storyboardData;
         }
             return [];
         }
