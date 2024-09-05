@@ -50,7 +50,7 @@ const Generate = () => {
     //模擬訊息
     useEffect(()=>{
         if(createdContent){
-            setStoryboardTitle(createdContent.newsGenResult.data.articles[0].title);
+            setStoryboardTitle(createdContent.articles[0].title);
         }
         setStoryboardData(StoryboardProcessor.processCreatedContent(createdContent));
     }, [createdContent])
@@ -64,7 +64,7 @@ const Generate = () => {
                 </div>
                 <p className="mt-2 text-m">播放日 2024-12-17</p>
             </div>
-
+            
             {/*時間軸*/}
             <TimeLine createdContent={createdContent}/>
             {/*分鏡稿*/}
@@ -269,7 +269,7 @@ const StoryboardProcessor = {
         },
     
         convertArticlesToJson(data) {
-        const articles = data.data.articles;
+        const articles = data.articles;
         return articles.map(article => ({
             title: article.title,
             content: article.content,
@@ -307,13 +307,13 @@ const StoryboardProcessor = {
         },
     
         processCreatedContent(createdContent) {
-        if (createdContent) {
-            const jsonResult = this.convertArticlesToJson(createdContent.newsGenResult);
-            console.log(JSON.stringify(jsonResult, null, 2));
-            const storyboardData = this.convertToStoryboardData(jsonResult[4]).storyboard;
-            console.log(JSON.stringify(storyboardData, null, 2));
-            return storyboardData;
-        }
-            return [];
+            if (createdContent) {
+                const jsonResult = this.convertArticlesToJson(createdContent);
+                console.log(JSON.stringify(jsonResult, null, 2));
+                const storyboardData = this.convertToStoryboardData(jsonResult[0]).storyboard;
+                console.log(JSON.stringify(storyboardData, null, 2));
+                return storyboardData;
+            }
+                return [];
         }
     };

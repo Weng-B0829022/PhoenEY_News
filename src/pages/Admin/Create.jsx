@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 //import getData from '../../../features/data/getData';
-import { executeNewsApi, executeNewsGen } from '../../../features/data/genStory';
+import { executeNewsApi, executeNewsGen, statusCheck } from '../../../features/data/genStory';
 import login from '../../../features/auth/login';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ContentContext } from './components/Context';
@@ -44,36 +44,54 @@ const Create = () => {
         setState(prevState => ({ ...prevState, [key]: value }));
     };
 
+    useEffect(() => {
+        let timer;
+        if (isGenerating) {
+            timer = setInterval(() => {
+                setElapsedTime(prev => prev + 1);
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [isGenerating]);
+    
     const handleGenerateResult = async () => {
         setIsGenerating(true);
         setCurrentStep(1);
         setElapsedTime(0);
         setNewsResults(null);
 
-        const timer = setInterval(() => {
-            setElapsedTime(prev => prev + 1);
-        }, 1000);
-
         try {
-            // Execute News API
-            const newsApiResult = await executeNewsApi(state.topicKeyword);
-            //console.log('News API 結果:', newsApiResult);
-            
-            // Update step after News API is complete
-            setCurrentStep(2);
-            setElapsedTime(0);
-
-            // Execute News Gen
-            const newsGenResult = await executeNewsGen();
-            //console.log('News Gen 結果:', newsGenResult);
-
-            setNewsResults({ newsApiResult, newsGenResult });
+            await executeNewsApi(state.topicKeyword);
+            await setTimeout(check, 5000);
         } catch (error) {
             console.error('執行新聞函數時發生錯誤:', error);
-        } finally {
-            clearInterval(timer);
             setIsGenerating(false);
-            setCurrentStep(0);
+        }
+    };
+
+    const check = async () => {
+        try {
+            const status = await statusCheck();
+            console.log('Current status:', status);
+
+            if (status.status === 'completed') {
+                if (status.step === 'news_api') {
+                    setCurrentStep(2);
+                    await executeNewsGen();
+                    await setTimeout(check, 1000); // 繼續檢查 news_gen 的狀態
+                } else if (status.step === 'news_gen') {
+                    setNewsResults(status.result.data);
+                    setIsGenerating(false);
+                    setCurrentStep(3); // 全部完成
+                }
+            } else if (status.status === 'generating') {
+                setTimeout(check, 5000); // 5秒後再次檢查
+            } else if (status.status === 'error') {
+                throw new Error(status.message || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('檢查狀態時發生錯誤:', error);
+            setIsGenerating(false);
         }
     };
 

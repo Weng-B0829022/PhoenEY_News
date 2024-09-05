@@ -5,5 +5,6 @@ export const endpoints = {
     refreshToken: '/api/token/refresh',
     getData: '/api/data',
     executeNewsApi: '/api/execute-newsapi',
-    executeNewsGen: '/api/execute-news-gen'
+    executeNewsGen: '/api/execute-news-gen',
+    statusCheck: '/api/execute-status'
 };

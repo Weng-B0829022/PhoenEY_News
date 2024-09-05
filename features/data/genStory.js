@@ -23,3 +23,15 @@ export async function executeNewsGen() {
         throw error;
     }
 }
+
+export async function statusCheck() {
+    try {
+        const result = await apiRequest(endpoints.statusCheck, 'GET');
+        //console.log('News Gen 結果:', result);
+        return result;
+    } catch (error) {
+        //console.error('News Gen 錯誤:', error);
+        throw error;
+    }
+}
+
