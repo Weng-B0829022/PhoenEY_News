@@ -239,7 +239,7 @@ export default Generate;
 
 const StoryboardProcessor = {
     convertStoryboardToJson(storyboardText) {
-        const cleanedText = storyboardText.replace(/^(Storyboard:|\*\*Storyboard[^*]*\*\*)/i, '').trim();
+        const cleanedText = "\n\n" + storyboardText.replace(/^(Storyboard:|\*\*Storyboard[^*]*\*\*)/i, '').trim();
         const scenes = cleanedText.split(/\n\d+\n/).filter(Boolean);
         
         return scenes.map((scene, index) => {
@@ -310,9 +310,9 @@ const StoryboardProcessor = {
             if (createdContent) {
                 const jsonResult = this.convertArticlesToJson(createdContent);
                 console.log(JSON.stringify(jsonResult, null, 2));
-                const storyboardData = this.convertToStoryboardData(jsonResult[0]).storyboard;
+                const storyboardData = this.convertToStoryboardData(jsonResult[3]).storyboard;
                 console.log(JSON.stringify(storyboardData, null, 2));
-                return storyboardData;
+                return storyboardData.slice(1);
             }
                 return [];
         }
