@@ -44,16 +44,21 @@ const tvSchedule = [
 
 const Generate = () => {
     const { createdContent } = useContext(ContentContext);
-    const [storyboardData, setStoryboardData] = useState([]);//分鏡稿資料
-    const [storyboardTitle, setStoryboardTitle] = useState('');//設定主標題
-    const [selectedDataIndex, setSelectedDataIndex] = useState(0);//挑內容
+    const [storyboardData, setStoryboardData] = useState([]);
+    const [storyboardTitle, setStoryboardTitle] = useState('');
+    const [selectedDataIndex, setSelectedDataIndex] = useState(0);
     //模擬訊息
-    useEffect(()=>{
-        if(createdContent){
-            setStoryboardTitle(createdContent.articles[0].title);
+    useEffect(() => {
+        if (createdContent) {
+            const jsonResult = StoryboardProcessor.convertArticlesToJson(createdContent);
+            setStoryboardTitle(createdContent.articles[selectedDataIndex].title);
+            setStoryboardData(StoryboardProcessor.convertToStoryboardData(jsonResult[selectedDataIndex]).storyboard);
         }
-        setStoryboardData(StoryboardProcessor.processCreatedContent(createdContent));
-    }, [createdContent])
+    }, [createdContent, selectedDataIndex]);
+
+    const handleSelectionChange = (event) => {
+        setSelectedDataIndex(parseInt(event.target.value));
+    };
 
     return (
         <div className="p-12">
@@ -64,7 +69,23 @@ const Generate = () => {
                 </div>
                 <p className="mt-2 text-m">播放日 2024-12-17</p>
             </div>
-            
+            {/*下拉選單*/}
+            <div className="mb-4 mt-4">
+                <label htmlFor="storyboardSelect" className="mr-2">選擇分鏡稿：</label>
+                <select 
+                    id="storyboardSelect" 
+                    value={selectedDataIndex} 
+                    onChange={handleSelectionChange}
+                    className="border rounded p-1"
+                >
+                    {createdContent && createdContent.articles.map((article, index) => (
+                        <option key={index} value={index}>
+                            {article.title}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
             {/*時間軸*/}
             <TimeLine createdContent={createdContent}/>
             {/*分鏡稿*/}
@@ -179,11 +200,12 @@ const Storyboard = ({storyboardData, storyboardTitle}) => {
                     isStoryboardOpen
                     ? '' 
                     : 'border-gray-100 text-textLight hover:shadow-sm hover:border-neutral-100 hover:bg-blue-50 hover:text-blue-500'
-                } font-bold border-2 cursor-pointer rounded-md `}
-                onClick={handleClick}>
-                <h1 className="text-3xl font-bold ml-2 mt-2">分鏡稿</h1>
-                <p className="mt-2 text-m ml-2 mb-2">為單則影片之分鏡稿，依選擇模式可進行不同程度的調整</p>
-            
+                } font-bold border-2 rounded-md `}
+                >
+                <div onClick={handleClick} className='cursor-pointer'>
+                    <h1 className="text-3xl font-bold ml-2 mt-2">分鏡稿</h1>
+                    <p className="mt-2 text-m ml-2 mb-2">為單則影片之分鏡稿，依選擇模式可進行不同程度的調整</p>
+                </div>
                     {isStoryboardOpen && (
                         <div className="flex justify-between p-2 bg-white">
                             <div className='mr-4 p-2 ml-2'>
