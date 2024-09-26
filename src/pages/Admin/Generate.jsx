@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { ContentContext } from './components/Context';
 import LeftArrowIcon from '../../svg/LeftArrowSvg';
 import DownArrowIcon from '../../svg/DownArrowSvg';
+import { executeNewsGenImg } from '../../../features/data/genStory'; // 請確保路徑正確
+
 
 const tvSchedule = [
     [
@@ -60,6 +62,23 @@ const Generate = () => {
         setSelectedDataIndex(parseInt(event.target.value));
     };
 
+    const handleGenerateVideo = async (index) => {
+        setGeneratingVideo(true);
+        setGenerationResult(null);
+        try {
+            const result = await executeNewsGenImg(index);
+            console.log('Video generation response:', result);
+            setGenerationResult(result);
+            // 可以在這裡處理成功生成的邏輯，例如顯示成功消息或更新UI
+        } catch (error) {
+            console.error('Error generating video:', error);
+            setGenerationResult({ error: 'Failed to generate video' });
+            // 可以在這裡處理錯誤，例如顯示錯誤消息
+        } finally {
+            setGeneratingVideo(false);
+        }
+    };
+    
     return (
         <div className="p-12">
             <div className="flex justify-between items-center">
@@ -89,8 +108,11 @@ const Generate = () => {
             {/*時間軸*/}
             <TimeLine createdContent={createdContent}/>
             {/*分鏡稿*/}
-            <Storyboard storyboardData={storyboardData} storyboardTitle={storyboardTitle}/>
-
+            <Storyboard 
+                storyboardData={storyboardData}
+                storyboardTitle={storyboardTitle}
+                selectedIndex={selectedDataIndex}
+            />
         </div>
     );
 };
@@ -185,15 +207,102 @@ const TimeLine = () => {
         </div>
     );
 };
-
-const Storyboard = ({storyboardData, storyboardTitle}) => {
+const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
     const [isStoryboardOpen, setIsStoryboardOpen] = useState(false);
+    const [generatingVideo, setGeneratingVideo] = useState(false);
+    const [generationResult, setGenerationResult] = useState(null);
+    const [generationTime, setGenerationTime] = useState(0);
+    const [videoGenerationStatus, setVideoGenerationStatus] = useState(null);
     
     const handleClick = () => {
         setIsStoryboardOpen(prevState => !prevState);
     };
 
+    useEffect(() => {
+        let timer;
+        if (generatingVideo) {
+            timer = setInterval(() => {
+                setGenerationTime((prevTime) => prevTime + 1);
+            }, 1000);
+        } else {
+            setGenerationTime(0);
+        }
+
+        return () => {
+            if (timer) clearInterval(timer);
+        };
+    }, [generatingVideo]);
+
+    useEffect(() => {
+        if (generationResult && generationResult.status === "success") {
+            handleVideoGeneration();
+        }
+    }, [generationResult]);
+
+    const handleGenerateVideo = async () => {
+        setGeneratingVideo(true);
+        setGenerationResult(null);
+        setGenerationTime(0);
+        setVideoGenerationStatus(null);
+        try {
+            const result = await executeNewsGenImg(selectedIndex);
+            console.log('Image generation response:', result);
+            setGenerationResult(result);
+        } catch (error) {
+            console.error('Error generating images:', error);
+            setGenerationResult({ error: 'Failed to generate images' });
+        } finally {
+            setGeneratingVideo(false);
+        }
+    };
+
+    const handleVideoGeneration = async () => {
+        setVideoGenerationStatus('開始生成影片，請稍等...');
+        try {
+            const result = await executeNewsCompositeVideo(selectedIndex);
+            console.log('Video generation response:', result);
+            setVideoGenerationStatus('影片生成完成');
+            // 可以在這裡添加進一步的處理邏輯，例如顯示影片鏈接等
+        } catch (error) {
+            console.error('Error generating video:', error);
+            setVideoGenerationStatus('影片生成失敗');
+        }
+    };
+
+    const renderGenerationResult = () => {
+        if (!generationResult) return null;
+
+        return (
+            <div className="mt-4 p-4 bg-gray-100 rounded-md">
+                <h2 className="text-xl font-bold mb-2">生成的圖片：以自動繼續生成影片 請稍等</h2>
+                {generationResult.status === "success" ? (
+                    <div>
+                        <p>{generationResult.message}</p>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                            {generationResult.data.map((imageUrl, index) => (
+                                <img 
+                                    key={index}
+                                    src={imageUrl} 
+                                    alt={`Generated image ${index + 1}`}
+                                    className="w-full h-auto rounded shadow-lg"
+                                />
+                            ))}
+                        </div>
+                        {videoGenerationStatus && (
+                            <p className="mt-4 text-lg font-semibold">{videoGenerationStatus}</p>
+                        )}
+                    </div>
+                ) : (
+                    <pre className="whitespace-pre-wrap">
+                        {JSON.stringify(generationResult, null, 2)}
+                    </pre>
+                )}
+            </div>
+        );
+    };
+
     const headers = ['段落', '秒數', '畫面', '畫面描述', '旁白', '字數'];
+
     return (
         <div>
             <div className={`p-3 sm:p-4 group mt-4 ${
@@ -201,63 +310,72 @@ const Storyboard = ({storyboardData, storyboardTitle}) => {
                     ? '' 
                     : 'border-gray-100 text-textLight hover:shadow-sm hover:border-neutral-100 hover:bg-blue-50 hover:text-blue-500'
                 } font-bold border-2 rounded-md `}
-                >
+            >
                 <div onClick={handleClick} className='cursor-pointer'>
                     <h1 className="text-3xl font-bold ml-2 mt-2">分鏡稿</h1>
                     <p className="mt-2 text-m ml-2 mb-2">為單則影片之分鏡稿，依選擇模式可進行不同程度的調整</p>
                 </div>
-                    {isStoryboardOpen && (
-                        <div className="flex justify-between p-2 bg-white">
-                            <div className='mr-4 p-2 ml-2'>
-                                <div className='border border-gray-300 w-48 mb-4 rounded'>
-                                    <div className="flex justify-between">
-                                        <h1 className="text-lg font-bold p-2">主標題</h1>
-                                        {storyboardTitle && 
-                                        <p className="text-lg p-2">
-                                            {storyboardTitle}
-                                        </p>}
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <h1 className="text-lg font-bold p-2">副標題</h1>
-                                        <p className="text-lg p-2">這是副標題</p>
-                                    </div>
+                {isStoryboardOpen && (
+                    <div className="flex justify-between p-2 bg-white">
+                        <div className='mr-4 p-2 ml-2'>
+                            <div className='border border-gray-300 w-48 mb-4 rounded'>
+                                <div className="flex justify-between">
+                                    <h1 className="text-lg font-bold p-2">主標題</h1>
+                                    {storyboardTitle && 
+                                    <p className="text-lg p-2">
+                                        {storyboardTitle}
+                                    </p>}
                                 </div>
-                                <div>
-                                    <h1 className="text-lg font-bold mb-2">主播</h1>
-                                    <img className='rounded' src="https://picsum.photos/300/200?random=7" alt="主播"/>
+                                <div className="flex justify-between">
+                                    <h1 className="text-lg font-bold p-2">副標題</h1>
+                                    <p className="text-lg p-2">這是副標題</p>
                                 </div>
                             </div>
-
-                            <div className="overflow-x-auto pr-2 pb-2">
-                                <table className="min-w-full border-collapse mt-2 text-black">
-                                    <tbody>
-                                        {headers.map((header, index) => (
-                                        <tr key={header}>
-                                            <th className="text-center border px-2 py-2">{header}</th>
-                                            {storyboardData.map((scene, sceneIndex) => (
-                                            <td key={sceneIndex} className="text-center border px-2 py-2">
-                                                {header === '畫面' ? (
-                                                <img src={scene.畫面} alt={scene.畫面描述} className="w-44 h-auto mx-auto" />
-                                                ) : (
-                                                scene[header]
-                                                )}
-                                            </td>
-                                            ))}
-                                        </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                            <div>
+                                <h1 className="text-lg font-bold mb-2">主播</h1>
+                                <img className='rounded' src="https://picsum.photos/300/200?random=7" alt="主播"/>
+                            </div>
+                            <div className="mt-4">
+                                <button 
+                                    onClick={handleGenerateVideo}
+                                    disabled={generatingVideo}
+                                    className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${generatingVideo ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                >
+                                    {generatingVideo ? `生成中 (${generationTime}s)` : '生成影片'}
+                                </button>
                             </div>
                         </div>
-                    )}
-                </div>
-        </div>    
+
+                        <div className="overflow-x-auto pr-2 pb-2">
+                            <table className="min-w-full border-collapse mt-2 text-black">
+                                <tbody>
+                                    {headers.map((header, index) => (
+                                    <tr key={header}>
+                                        <th className="text-center border px-2 py-2">{header}</th>
+                                        {storyboardData.map((scene, sceneIndex) => (
+                                        <td key={sceneIndex} className="text-center border px-2 py-2">
+                                            {header === '畫面' ? (
+                                            <img src={scene.畫面} alt={scene.畫面描述} className="w-44 h-auto mx-auto" />
+                                            ) : (
+                                            scene[header]
+                                            )}
+                                        </td>
+                                        ))}
+                                    </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+            </div>
+            {renderGenerationResult()}
+        </div>
     );
 };
 
+
 export default Generate;
-
-
 
 const StoryboardProcessor = {
     convertStoryboardToJson(storyboardText) {

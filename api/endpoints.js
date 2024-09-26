@@ -6,5 +6,7 @@ export const endpoints = {
     getData: '/api/data',
     executeNewsApi: '/api/execute-newsapi',
     executeNewsGen: '/api/execute-news-gen',
-    statusCheck: '/api/execute-status'
+    statusCheck: '/api/execute-status',
+    executeNewsGenImg: '/api/execute-news-gen-img',
+    executeNewsCompositeVideo: '/api/execute-news-composite-video'
 };
