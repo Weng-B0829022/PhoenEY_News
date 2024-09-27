@@ -48,7 +48,7 @@ export async function executeNewsGenImg(index) {
 
 export async function executeNewsCompositeVideo(index) {
     try {
-        const result = await apiRequest(endpoints.executeNewsCompositeVideo, 'POST', { index });
+        const result = await apiRequest(endpoints.executeNewsCompositeVideo, 'POST', { index }, true, false, true);
         console.log('News Composite Video 結果:', result);
         return result;
     } catch (error) {

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { ContentContext } from './components/Context';
 import LeftArrowIcon from '../../svg/LeftArrowSvg';
 import DownArrowIcon from '../../svg/DownArrowSvg';
-import { executeNewsGenImg } from '../../../features/data/genStory'; // 請確保路徑正確
+import { executeNewsGenImg, executeNewsCompositeVideo } from '../../../features/data/genStory'; // 請確保路徑正確
 
 
 const tvSchedule = [
@@ -213,7 +213,8 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
     const [generationResult, setGenerationResult] = useState(null);
     const [generationTime, setGenerationTime] = useState(0);
     const [videoGenerationStatus, setVideoGenerationStatus] = useState(null);
-    
+    const [videoBlob, setVideoBlob] = useState(null);
+
     const handleClick = () => {
         setIsStoryboardOpen(prevState => !prevState);
     };
@@ -239,11 +240,21 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
         }
     }, [generationResult]);
 
+    useEffect(() => {
+        // 當組件卸載時，釋放 Blob URL
+        return () => {
+            if (videoBlob) {
+                URL.revokeObjectURL(videoBlob);
+            }
+        };
+    }, [videoBlob]);
+
     const handleGenerateVideo = async () => {
         setGeneratingVideo(true);
         setGenerationResult(null);
         setGenerationTime(0);
         setVideoGenerationStatus(null);
+        setVideoBlob(null);
         try {
             const result = await executeNewsGenImg(selectedIndex);
             console.log('Image generation response:', result);
@@ -259,24 +270,53 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
     const handleVideoGeneration = async () => {
         setVideoGenerationStatus('開始生成影片，請稍等...');
         try {
-            const result = await executeNewsCompositeVideo(selectedIndex);
-            console.log('Video generation response:', result);
+            // 步驟 1: 調用 API
+            console.log('正在調用 executeNewsCompositeVideo...');
+            const response = await executeNewsCompositeVideo(selectedIndex);
+            console.log('Video generation response:', response);
+    
+            // 檢查響應是否成功
+            if (!response.ok) {
+                throw new Error(`API 響應不成功: ${response.status} ${response.statusText}`);
+            }
+    
+            // 步驟 2: 將響應轉換為 Blob
+            console.log('正在將響應轉換為 Blob...');
+            const blob = await response.blob();
+            console.log('Blob 類型:', blob.type);
+    
+            // 步驟 3: 檢查 Blob 類型
+            if (blob.type !== 'video/mp4' && blob.type !== 'application/octet-stream') {
+                throw new Error(`未知的文件類型: ${blob.type}`);
+            }
+    
+            // 步驟 4: 創建 Blob URL
+            console.log('正在創建 Blob URL...');
+            const videoUrl = URL.createObjectURL(blob);
+    
+            // 步驟 5: 更新狀態
+            setVideoBlob(videoUrl);
             setVideoGenerationStatus('影片生成完成');
-            // 可以在這裡添加進一步的處理邏輯，例如顯示影片鏈接等
+    
         } catch (error) {
-            console.error('Error generating video:', error);
-            setVideoGenerationStatus('影片生成失敗');
+            console.error('影片生成過程中發生錯誤:', error);
+            setVideoGenerationStatus(`影片生成失敗: ${error.message}`);
+    
+            // 額外的錯誤信息記錄
+            if (error.response) {
+                console.error('錯誤響應數據:', await error.response.text());
+            }
         }
     };
 
     const renderGenerationResult = () => {
-        if (!generationResult) return null;
-
+        if (!generationResult && !videoBlob) return null;
+    
         return (
             <div className="mt-4 p-4 bg-gray-100 rounded-md">
-                <h2 className="text-xl font-bold mb-2">生成的圖片：以自動繼續生成影片 請稍等</h2>
-                {generationResult.status === "success" ? (
+                {generationResult && generationResult.status === "success" && (
                     <div>
+                        <h2 className="text-xl font-bold mb-2">生成的圖片：</h2>
                         <p>{generationResult.message}</p>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                             {generationResult.data.map((imageUrl, index) => (
@@ -288,14 +328,21 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
                                 />
                             ))}
                         </div>
-                        {videoGenerationStatus && (
-                            <p className="mt-4 text-lg font-semibold">{videoGenerationStatus}</p>
-                        )}
                     </div>
-                ) : (
-                    <pre className="whitespace-pre-wrap">
-                        {JSON.stringify(generationResult, null, 2)}
-                    </pre>
+                )}
+                
+                {videoGenerationStatus && (
+                    <p className="mt-4 text-lg font-semibold">{videoGenerationStatus}</p>
+                )}
+                
+                {videoBlob && (
+                    <div className="mt-4">
+                        <h3 className="text-lg font-bold mb-2">生成的影片：</h3>
+                        <video width="640" height="360" controls>
+                            <source src={videoBlob} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
                 )}
             </div>
         );

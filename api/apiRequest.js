@@ -3,7 +3,7 @@ import { getAccessToken } from './tokenManagement';
 import handleResponse from './handleResponse';
 import refreshAccessToken from '../features/auth/refreshAccessToken';
 
-export default async function apiRequest(endpoint, method = 'GET', body = null, requiresAuth = true, isRetry = false) {
+export default async function apiRequest(endpoint, method = 'GET', body = null, requiresAuth = true, isRetry = false, isBinary = false) {
     const accessToken = getAccessToken();
     const headers = new Headers({
         'Content-Type': 'application/json',
@@ -37,13 +37,18 @@ export default async function apiRequest(endpoint, method = 'GET', body = null, 
 
         const response = await fetch(url, config);
 
-        if (response.status === 401 && !isRetry) {
-            //console.log('Token expired, refreshing...');
-            await refreshAccessToken();
-            return apiRequest(endpoint, method, body, requiresAuth, true);
+        if (isBinary) {
+            return response;
+        } else {
+            if (response.status === 401 && !isRetry) {
+                //console.log('Token expired, refreshing...');
+                await refreshAccessToken();
+                return apiRequest(endpoint, method, body, requiresAuth, true);
+            }
+
+            return await handleResponse(response);
         }
 
-        return await handleResponse(response);
     } catch (error) {
         //console.error("API request error:", error);
         throw error;
