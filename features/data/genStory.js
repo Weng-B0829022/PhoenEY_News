@@ -35,6 +35,18 @@ export async function statusCheck() {
     }
 }
 
+export async function executeNewsGenVideo(story_object) {
+    try {
+        const result = await apiRequest(endpoints.executeNewsGenVideo, 'POST', { story_object });
+        //console.log('News Gen Img 結果:', result);
+        return result;
+    } catch (error) {
+        //console.error('News Gen Img 錯誤:', error);
+        throw error;
+    }
+}
+
+
 export async function executeNewsGenImg(index) {
     try {
         const result = await apiRequest(endpoints.executeNewsGenImg, 'POST', { index });

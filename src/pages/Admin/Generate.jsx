@@ -2,59 +2,18 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { ContentContext } from './components/Context';
 import LeftArrowIcon from '../../svg/LeftArrowSvg';
 import DownArrowIcon from '../../svg/DownArrowSvg';
-import { executeNewsGenImg, executeNewsCompositeVideo } from '../../../features/data/genStory'; // 請確保路徑正確
-
-
-const tvSchedule = [
-    [
-        { time: "01:00", screen: "https://picsum.photos/300/200?random=1" },
-        { time: "02:00", screen: "https://picsum.photos/300/200?random=2" },
-        { time: "03:00", screen: "https://picsum.photos/300/200?random=3" },
-        { time: "04:00", screen: "https://picsum.photos/300/200?random=4" },
-    ],
-    [
-        { time: "05:00", screen: "https://picsum.photos/300/200?random=5" },
-        { time: "06:00", screen: "https://picsum.photos/300/200?random=6" },
-        { time: "07:00", screen: "https://picsum.photos/300/200?random=7" },
-        { time: "08:00", screen: "https://picsum.photos/300/200?random=8" },
-    ],
-    [
-        { time: "09:00", screen: "https://picsum.photos/300/200?random=9" },
-        { time: "10:00", screen: "https://picsum.photos/300/200?random=10" },
-        { time: "11:00", screen: "https://picsum.photos/300/200?random=11" },
-        { time: "12:00", screen: "https://picsum.photos/300/200?random=12" },
-    ],
-    [
-        { time: "13:00", screen: "https://picsum.photos/300/200?random=13" },
-        { time: "14:00", screen: "https://picsum.photos/300/200?random=14" },
-        { time: "15:00", screen: "https://picsum.photos/300/200?random=15" },
-        { time: "16:00", screen: "https://picsum.photos/300/200?random=16" },
-    ],
-    [
-        { time: "17:00", screen: "https://picsum.photos/300/200?random=17" },
-        { time: "18:00", screen: "https://picsum.photos/300/200?random=18" },
-        { time: "19:00", screen: "https://picsum.photos/300/200?random=19" },
-        { time: "20:00", screen: "https://picsum.photos/300/200?random20" },
-    ],
-    [
-        { time: "21:00", screen: "https://picsum.photos/300/200?random=21" },
-        { time: "22:00", screen: "https://picsum.photos/300/200?random=22" },
-        { time: "23:00", screen: "https://picsum.photos/300/200?random=23" },
-        { time: "00:00", screen: "https://picsum.photos/300/200?random=24" },
-    ],
-];
-
+import { executeNewsGenVideo } from '../../../features/data/genStory'; // 請確保路徑正確
 const Generate = () => {
     const { createdContent } = useContext(ContentContext);
     const [storyboardData, setStoryboardData] = useState([]);
     const [storyboardTitle, setStoryboardTitle] = useState('');
     const [selectedDataIndex, setSelectedDataIndex] = useState(0);
-    //模擬訊息
+
     useEffect(() => {
         if (createdContent) {
             const jsonResult = StoryboardProcessor.convertArticlesToJson(createdContent);
             setStoryboardTitle(createdContent.articles[selectedDataIndex].title);
-            setStoryboardData(StoryboardProcessor.convertToStoryboardData(jsonResult[selectedDataIndex]).storyboard);
+            setStoryboardData(StoryboardProcessor.convertToStoryboardData(jsonResult[selectedDataIndex]).storyboard.slice(1));
         }
     }, [createdContent, selectedDataIndex]);
 
@@ -62,23 +21,6 @@ const Generate = () => {
         setSelectedDataIndex(parseInt(event.target.value));
     };
 
-    const handleGenerateVideo = async (index) => {
-        setGeneratingVideo(true);
-        setGenerationResult(null);
-        try {
-            const result = await executeNewsGenImg(index);
-            console.log('Video generation response:', result);
-            setGenerationResult(result);
-            // 可以在這裡處理成功生成的邏輯，例如顯示成功消息或更新UI
-        } catch (error) {
-            console.error('Error generating video:', error);
-            setGenerationResult({ error: 'Failed to generate video' });
-            // 可以在這裡處理錯誤，例如顯示錯誤消息
-        } finally {
-            setGeneratingVideo(false);
-        }
-    };
-    
     return (
         <div className="p-12">
             <div className="flex justify-between items-center">
@@ -88,7 +30,6 @@ const Generate = () => {
                 </div>
                 <p className="mt-2 text-m">播放日 2024-12-17</p>
             </div>
-            {/*下拉選單*/}
             <div className="mb-4 mt-4">
                 <label htmlFor="storyboardSelect" className="mr-2">選擇分鏡稿：</label>
                 <select 
@@ -104,10 +45,7 @@ const Generate = () => {
                     ))}
                 </select>
             </div>
-
-            {/*時間軸*/}
             <TimeLine createdContent={createdContent}/>
-            {/*分鏡稿*/}
             <Storyboard 
                 storyboardData={storyboardData}
                 storyboardTitle={storyboardTitle}
@@ -207,13 +145,12 @@ const TimeLine = () => {
         </div>
     );
 };
+
 const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
     const [isStoryboardOpen, setIsStoryboardOpen] = useState(false);
     const [generatingVideo, setGeneratingVideo] = useState(false);
     const [generationResult, setGenerationResult] = useState(null);
     const [generationTime, setGenerationTime] = useState(0);
-    const [videoGenerationStatus, setVideoGenerationStatus] = useState(null);
-    const [videoBlob, setVideoBlob] = useState(null);
 
     const handleClick = () => {
         setIsStoryboardOpen(prevState => !prevState);
@@ -234,115 +171,47 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
         };
     }, [generatingVideo]);
 
-    useEffect(() => {
-        if (generationResult && generationResult.status === "success") {
-            handleVideoGeneration();
-        }
-    }, [generationResult]);
-
-    useEffect(() => {
-        // 當組件卸載時，釋放 Blob URL
-        return () => {
-            if (videoBlob) {
-                URL.revokeObjectURL(videoBlob);
-            }
-        };
-    }, [videoBlob]);
-
     const handleGenerateVideo = async () => {
         setGeneratingVideo(true);
         setGenerationResult(null);
         setGenerationTime(0);
-        setVideoGenerationStatus(null);
-        setVideoBlob(null);
         try {
-            const result = await executeNewsGenImg(selectedIndex);
-            console.log('Image generation response:', result);
+            // 準備要發送的數據
+            console.log(storyboardData)
+            const dataToSend = {
+                title: storyboardTitle,
+                storyboard: storyboardData.map((scene, index, array) => {
+                    return {
+                        paragraph: scene.段落,
+                        duration: scene.秒數,
+                        calculatedDuration: calculateDuration(scene.秒數),
+                        imageDescription: scene.畫面描述,
+                        voiceover: scene.旁白,
+                        characterCount: parseInt(scene.字數.replace(/[^0-9]/g, ''))
+                    };
+                })
+            };
+
+            const result = await executeNewsGenVideo(dataToSend);
+            console.log('Video generation response:', result);
             setGenerationResult(result);
         } catch (error) {
-            console.error('Error generating images:', error);
-            setGenerationResult({ error: 'Failed to generate images' });
+            console.error('Error generating video:', error);
+            setGenerationResult({ error: 'Failed to generate video' });
         } finally {
             setGeneratingVideo(false);
         }
     };
 
-    const handleVideoGeneration = async () => {
-        setVideoGenerationStatus('開始生成影片，請稍等...');
-        try {
-            // 步驟 1: 調用 API
-            console.log('正在調用 executeNewsCompositeVideo...');
-            const response = await executeNewsCompositeVideo(selectedIndex);
-            console.log('Video generation response:', response);
-    
-            // 檢查響應是否成功
-            if (!response.ok) {
-                throw new Error(`API 響應不成功: ${response.status} ${response.statusText}`);
-            }
-    
-            // 步驟 2: 將響應轉換為 Blob
-            console.log('正在將響應轉換為 Blob...');
-            const blob = await response.blob();
-            console.log('Blob 類型:', blob.type);
-    
-            // 步驟 3: 檢查 Blob 類型
-            if (blob.type !== 'video/mp4' && blob.type !== 'application/octet-stream') {
-                throw new Error(`未知的文件類型: ${blob.type}`);
-            }
-    
-            // 步驟 4: 創建 Blob URL
-            console.log('正在創建 Blob URL...');
-            const videoUrl = URL.createObjectURL(blob);
-    
-            // 步驟 5: 更新狀態
-            setVideoBlob(videoUrl);
-            setVideoGenerationStatus('影片生成完成');
-    
-        } catch (error) {
-            console.error('影片生成過程中發生錯誤:', error);
-            setVideoGenerationStatus(`影片生成失敗: ${error.message}`);
-    
-            // 額外的錯誤信息記錄
-            if (error.response) {
-                console.error('錯誤響應數據:', await error.response.text());
-            }
-        }
-    };
-
     const renderGenerationResult = () => {
-        if (!generationResult && !videoBlob) return null;
+        if (!generationResult) return null;
     
         return (
             <div className="mt-4 p-4 bg-gray-100 rounded-md">
-                {generationResult && generationResult.status === "success" && (
-                    <div>
-                        <h2 className="text-xl font-bold mb-2">生成的圖片：</h2>
-                        <p>{generationResult.message}</p>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                            {generationResult.data.map((imageUrl, index) => (
-                                <img 
-                                    key={index}
-                                    src={imageUrl} 
-                                    alt={`Generated image ${index + 1}`}
-                                    className="w-full h-auto rounded shadow-lg"
-                                />
-                            ))}
-                        </div>
-                    </div>
-                )}
-                
-                {videoGenerationStatus && (
-                    <p className="mt-4 text-lg font-semibold">{videoGenerationStatus}</p>
-                )}
-                
-                {videoBlob && (
-                    <div className="mt-4">
-                        <h3 className="text-lg font-bold mb-2">生成的影片：</h3>
-                        <video width="640" height="360" controls>
-                            <source src={videoBlob} type="video/mp4" />
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
+                <h2 className="text-xl font-bold mb-2">生成結果：</h2>
+                <p>{generationResult.message || '視頻生成已開始，請稍後查看結果。'}</p>
+                {generationResult.error && (
+                    <p className="text-red-500">錯誤: {generationResult.error}</p>
                 )}
             </div>
         );
@@ -421,8 +290,8 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
     );
 };
 
-
 export default Generate;
+
 
 const StoryboardProcessor = {
     convertStoryboardToJson(storyboardText) {
@@ -492,15 +361,36 @@ const StoryboardProcessor = {
             }) : []
         };
         },
-    
-        processCreatedContent(createdContent) {
-            if (createdContent) {
-                const jsonResult = this.convertArticlesToJson(createdContent);
-                console.log(JSON.stringify(jsonResult, null, 2));
-                const storyboardData = this.convertToStoryboardData(jsonResult[3]).storyboard;
-                console.log(JSON.stringify(storyboardData, null, 2));
-                return storyboardData.slice(1);
-            }
-                return [];
-        }
+        //暫時用不到
+        // processCreatedContent(createdContent) {
+        //     if (createdContent) {
+        //         const jsonResult = this.convertArticlesToJson(createdContent);
+        //         console.log(JSON.stringify(jsonResult, null, 2));
+        //         const storyboardData = this.convertToStoryboardData(jsonResult[3]).storyboard;
+        //         console.log(JSON.stringify(storyboardData, null, 2));
+        //         return storyboardData.slice(1);
+        //     }
+        //         return [];
+        // }
     };
+    function calculateDuration(timeString) {
+        // 清除字符串中的所有空格
+        timeString = timeString.replace(/\s/g, '');
+        
+        // 分割時間字符串
+        const [startTime, endTime] = timeString.split('-->');
+        
+        // 將時間轉換為毫秒
+        function timeToMilliseconds(t) {
+            const [time, ms] = t.split(',');
+            const [h, m, s] = time.split(':');
+            return parseInt(h) * 3600000 + parseInt(m) * 60000 + parseInt(s) * 1000 + parseInt(ms);
+        }
+        
+        // 計算開始和結束時間（毫秒）
+        const startMs = timeToMilliseconds(startTime);
+        const endMs = timeToMilliseconds(endTime);
+        
+        // 計算並返回持續時間（毫秒）
+        return endMs - startMs;
+    }
