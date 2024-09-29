@@ -3,6 +3,9 @@ import { ContentContext } from './components/Context';
 import LeftArrowIcon from '../../svg/LeftArrowSvg';
 import DownArrowIcon from '../../svg/DownArrowSvg';
 import { executeNewsGenVideo } from '../../../features/data/genStory'; // 請確保路徑正確
+import {API_BASE_URL, endpoints} from '../../../api/endpoints';
+
+
 const Generate = () => {
     const { createdContent } = useContext(ContentContext);
     const [storyboardData, setStoryboardData] = useState([]);
@@ -205,13 +208,31 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
 
     const renderGenerationResult = () => {
         if (!generationResult) return null;
-    
+
         return (
             <div className="mt-4 p-4 bg-gray-100 rounded-md">
                 <h2 className="text-xl font-bold mb-2">生成結果：</h2>
-                <p>{generationResult.message || '視頻生成已開始，請稍後查看結果。'}</p>
-                {generationResult.error && (
-                    <p className="text-red-500">錯誤: {generationResult.error}</p>
+                <p>{generationResult.message || '視頻生成已完成。'}</p>
+                {generationResult.image_urls && (
+                    <div className="mt-2">
+                        <p>生成的圖片：</p>
+                        <div className="flex flex-wrap">
+                            {generationResult.image_urls.map((url, index) => (
+                                <img key={index} src={url.url} alt={`生成圖片 ${index + 1}`} className="w-32 h-32 object-cover m-1" />
+                            ))}
+                        </div>
+                    </div>
+                )}
+                {generationResult.video_paths && (
+                    <div className="mt-4">
+                        <video 
+                            controls 
+                            className="w-full max-w-2xl mt-2"
+                            src={`${API_BASE_URL}${endpoints.getGeneratedVideo}?filename=${generationResult.video_paths}`}
+                        >
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
                 )}
             </div>
         );
