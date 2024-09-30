@@ -4,7 +4,7 @@ import LeftArrowIcon from '../../svg/LeftArrowSvg';
 import DownArrowIcon from '../../svg/DownArrowSvg';
 import { executeNewsGenVideo } from '../../../features/data/genStory'; // 請確保路徑正確
 import {API_BASE_URL, endpoints} from '../../../api/endpoints';
-
+import { Link } from 'react-router-dom';
 
 const Generate = () => {
     const { createdContent } = useContext(ContentContext);
@@ -25,7 +25,7 @@ const Generate = () => {
     };
 
     return (
-        <div className="p-12">
+        <div className="p-6">
             <div className="flex justify-between items-center">
                 <div className="flex items-center">
                     <LeftArrowIcon/>
@@ -232,7 +232,14 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
                         >
                             Your browser does not support the video tag.
                         </video>
+                        <Link 
+                            to={`/admin/video/${encodeURIComponent(generationResult.video_paths)}`}
+                            className="text-blue-500 hover:text-blue-700 underline"
+                            >
+                            在新頁面中查看影片
+                        </Link>
                     </div>
+
                 )}
             </div>
         );
@@ -242,7 +249,7 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
 
     return (
         <div>
-            <div className={`p-3 sm:p-4 group mt-4 ${
+            <div className={`overflow-x-auto p-3 sm:p-4 group mt-4 ${
                     isStoryboardOpen
                     ? '' 
                     : 'border-gray-100 text-textLight hover:shadow-sm hover:border-neutral-100 hover:bg-blue-50 hover:text-blue-500'
@@ -283,7 +290,7 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
                             </div>
                         </div>
 
-                        <div className="overflow-x-auto pr-2 pb-2">
+                        <div className="pr-2 pb-2">
                             <table className="min-w-full border-collapse mt-2 text-black">
                                 <tbody>
                                     {headers.map((header, index) => (
@@ -292,9 +299,9 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
                                         {storyboardData.map((scene, sceneIndex) => (
                                         <td key={sceneIndex} className="text-center border px-2 py-2">
                                             {header === '畫面' ? (
-                                            <img src={scene.畫面} alt={scene.畫面描述} className="w-44 h-auto mx-auto" />
+                                                <img src={scene.畫面} alt={scene.畫面描述} className="w-44 h-auto mx-auto" />
                                             ) : (
-                                            scene[header]
+                                                scene[header]
                                             )}
                                         </td>
                                         ))}
