@@ -16,7 +16,7 @@ const Generate = () => {
         if (createdContent) {
             const jsonResult = StoryboardProcessor.convertArticlesToJson(createdContent);
             setStoryboardTitle(createdContent.articles[selectedDataIndex].title);
-            setStoryboardData(StoryboardProcessor.convertToStoryboardData(jsonResult[selectedDataIndex]).storyboard.slice(1));
+            setStoryboardData(StoryboardProcessor.convertToStoryboardData(jsonResult[selectedDataIndex]).storyboard.slice(0));
         }
     }, [createdContent, selectedDataIndex]);
 
@@ -323,12 +323,12 @@ export default Generate;
 
 const StoryboardProcessor = {
     convertStoryboardToJson(storyboardText) {
-        const cleanedText = "\n\n" + storyboardText.replace(/^(Storyboard:|\*\*Storyboard[^*]*\*\*)/i, '').trim();
-        const scenes = cleanedText.split(/\n\d+\n/).filter(Boolean);
-        
+        const cleanedText = "\n\n" + storyboardText;
+        const scenes = cleanedText.split("\n\n").filter(Boolean);
+        console.log(scenes)
         return scenes.map((scene, index) => {
             const lines = scene.trim().split('\n');
-            const timeCode = lines[0];
+            const timeCode = lines[1];
             let visualElement = '';
             let voiceoverText = '';
             
