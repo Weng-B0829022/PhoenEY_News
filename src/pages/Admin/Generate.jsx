@@ -234,13 +234,15 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
                         </div>
                     </div>
                 )}
-                {uploadInfo && <a 
+                {uploadInfo ? <a 
                     href={`https://drive.google.com/drive/folders/${uploadInfo.uploadId}?usp=drive_link`} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800 underline">
-                        {uploadTitle}
-                    </a>}
+                        {uploadInfo.uploadTitle}
+                    </a>:
+                    <p>影片上傳中請稍後...</p>
+                    }
                 {generationResult.video_paths && (
                     <div className="mt-4">
                         <video 
