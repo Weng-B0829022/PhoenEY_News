@@ -3,6 +3,7 @@ import { ContentContext } from './components/Context';
 import LeftArrowIcon from '../../svg/LeftArrowSvg';
 import DownArrowIcon from '../../svg/DownArrowSvg';
 import { executeNewsGenVideo } from '../../../features/data/genStory'; // 請確保路徑正確
+import { uploadVideo } from '../../../features/files/upload'
 import {API_BASE_URL, endpoints} from '../../../api/endpoints';
 import { Link } from 'react-router-dom';
 
@@ -153,6 +154,7 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
     const [isStoryboardOpen, setIsStoryboardOpen] = useState(false);
     const [generatingVideo, setGeneratingVideo] = useState(false);
     const [generationResult, setGenerationResult] = useState(null);
+    const [uploadInfo, setUploadInfo] = useState(null);
     const [generationTime, setGenerationTime] = useState(0);
 
     const handleClick = () => {
@@ -198,6 +200,15 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
             const result = await executeNewsGenVideo(dataToSend);
             console.log('Video generation response:', result);
             setGenerationResult(result);
+            if (result.random_id) {
+                // 第二次請求：使用 random_id 完成影片生成
+                const videoResult = await uploadVideo(result.random_id);
+                console.log('Video generation result:', videoResult);
+                setUploadInfo({"uploadId":videoResult.drive_file_id, "uploadTitle": storyboardTitle})
+            } else {
+                throw new Error('Failed to get random_id from initial generation');
+            }
+
         } catch (error) {
             console.error('Error generating video:', error);
             setGenerationResult({ error: 'Failed to generate video' });
@@ -212,7 +223,7 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
         return (
             <div className="mt-4 p-4 bg-gray-100 rounded-md">
                 <h2 className="text-xl font-bold mb-2">生成結果：</h2>
-                <p>{generationResult.message || '視頻生成已完成。'}</p>
+                <p>{generationResult.message || '影片生成已完成。'}</p>
                 {generationResult.image_urls && (
                     <div className="mt-2">
                         <p>生成的圖片：</p>
@@ -223,6 +234,13 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
                         </div>
                     </div>
                 )}
+                {uploadInfo && <a 
+                    href={`https://drive.google.com/drive/folders/${uploadInfo.uploadId}?usp=drive_link`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline">
+                        {uploadTitle}
+                    </a>}
                 {generationResult.video_paths && (
                     <div className="mt-4">
                         <video 
@@ -325,7 +343,7 @@ const StoryboardProcessor = {
     convertStoryboardToJson(storyboardText) {
         const cleanedText = "\n\n" + storyboardText;
         const scenes = cleanedText.split("\n\n").filter(Boolean);
-        console.log(scenes)
+        //console.log(scenes)
         return scenes.map((scene, index) => {
             const lines = scene.trim().split('\n');
             const timeCode = lines[1];

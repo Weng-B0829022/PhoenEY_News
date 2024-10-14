@@ -9,5 +9,6 @@ export const endpoints = {
     statusCheck: '/api/execute-status',
     executeNewsGenVideo: '/api/execute-news-gen-video',
     executeNewsGenImg: '/api/execute-news-gen-img',
-    getGeneratedVideo: '/api/get-generated-video'
+    getGeneratedVideo: '/api/get-generated-video',
+    uploadVideo: '/api/uploadVideo'
 };
