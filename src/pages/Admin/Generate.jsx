@@ -156,9 +156,14 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
     const [generationResult, setGenerationResult] = useState(null);
     const [uploadInfo, setUploadInfo] = useState(null);
     const [generationTime, setGenerationTime] = useState(0);
+    const [selectedAvatar, setSelectedAvatar] = useState('woman1'); // 新增：選擇主播的狀態
 
     const handleClick = () => {
         setIsStoryboardOpen(prevState => !prevState);
+    };
+
+    const handleAvatarChange = (event) => { // 新增：處理主播選擇變更
+        setSelectedAvatar(event.target.value);
     };
 
     useEffect(() => {
@@ -185,6 +190,7 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
             console.log(storyboardData)
             const dataToSend = {
                 title: storyboardTitle,
+                avatar: selectedAvatar, // 新增：將選擇的主播角色加入發送的數據
                 storyboard: storyboardData.map((scene, index, array) => {
                     return {
                         paragraph: scene.段落,
@@ -192,7 +198,7 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
                         calculatedDuration: calculateDuration(scene.秒數),
                         imageDescription: scene.畫面描述,
                         voiceover: scene.旁白,
-                        characterCount: parseInt(scene.字數.replace(/[^0-9]/g, ''))
+                        avatarCount: parseInt(scene.字數.replace(/[^0-9]/g, ''))
                     };
                 })
             };
@@ -297,6 +303,16 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
                             </div>
                             <div>
                                 <h1 className="text-lg font-bold mb-2">主播</h1>
+                                <select 
+                                    value={selectedAvatar}
+                                    onChange={handleAvatarChange}
+                                    className="border rounded p-1 mb-2"
+                                >
+                                    <option value="man1">林知曦(男性主播 1)</option>
+                                    <option value="man2">李澄風(男性主播 2)</option>
+                                    <option value="woman1">陳予恩(女性主播 1)</option>
+                                    <option value="woman2">張安晴(女性主播 2)</option>
+                                </select>
                                 <img className='rounded' src="https://picsum.photos/300/200?random=7" alt="主播"/>
                             </div>
                             <div className="mt-4">
