@@ -188,6 +188,7 @@ const Storyboard = ({ storyboardData, storyboardTitle, selectedIndex }) => {
         setGenerationTime(0);
         try {
             // 準備要發送的數據
+            //你好
             console.log(storyboardData)
             const dataToSend = {
                 title: storyboardTitle,
